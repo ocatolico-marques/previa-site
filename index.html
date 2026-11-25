@@ -248,6 +248,11 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
 @media (max-width: 991px) { .flock { height: 200vh; } }
 @media (max-width: 600px) {
   .flock-title { padding: 0 1.5rem; }
+  /* Celular: pratos ao fundo e título/frases na frente, sempre legíveis */
+  .photos { z-index: 0; }
+  .ph { opacity: .5; }
+  .flock-title .eyebrow-m, .flock-title .h-team, .flock-title .para { text-shadow: 0 0 .6rem rgba(20,26,22,.85), 0 0 1.4rem rgba(20,26,22,.6); }
+  .flock-title .para { color: var(--porcelana); }
   .stamp { width: 6rem; left: 0; top: -5rem; }
   .ph { width: 7rem; top: var(--mtop); }
   .ph.l { left: var(--mo); } .ph.r { right: var(--mo); }
