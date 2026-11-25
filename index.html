@@ -6,8 +6,19 @@
 <meta name="theme-color" content="#F4F5F2" />
 <link rel="preload" as="image" href="img/hero-mesa-m.webp" media="(max-aspect-ratio: 1/1)" />
 <link rel="preload" as="image" href="img/hero-mesa.webp" media="(min-aspect-ratio: 1/1)" />
-<title>Previa</title>
+<title>Previa: veja o prato antes de pedir</title>
 <meta name="description" content="Previa: cardápio em realidade aumentada, sites e plaquinhas NFC para restaurantes. Veja antes de pedir." />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23141A16' fill-rule='evenodd' d='M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z'/%3E%3Ccircle cx='32' cy='42' r='7' fill='%23A07C45'/%3E%3C/svg%3E" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="pt_BR" />
+<meta property="og:site_name" content="Previa" />
+<meta property="og:title" content="Previa: veja o prato antes de pedir" />
+<meta property="og:description" content="Cardápio em realidade aumentada, site e plaquinhas NFC para restaurantes. Seus pratos em 3D, no tamanho real, em cima da mesa do cliente." />
+<meta property="og:image" content="https://previa-site-ten.vercel.app/img/og.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Sora:wght@100..800&display=swap" />
@@ -417,7 +428,7 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
   <section class="stack" id="entrega" data-featured-stack="0.85">
     <div class="pin">
       <div class="col" data-scroll-reveal-group>
-        <p class="eyebrow-s" data-scroll-reveal="lines">Tudo o que o seu restaurante precisa no digital, numa solução só.</p>
+        <p class="eyebrow-s" data-scroll-reveal="lines">Cardápio, site e plaquinha com a sua marca, tudo no mesmo lugar.</p>
         <h2 class="h-sec" data-scroll-reveal="chars">Do cardápio <span class="alt">ao Google.</span></h2>
       </div>
       <div class="stage">
@@ -525,7 +536,7 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
             <p><b>Está no computador?</b> Aponte a câmera do celular para o código. O prato abre na sua mesa, em tamanho real.</p>
           </div>
         </div>
-        <p class="note">Cardápio de demonstração. No seu, entram os seus pratos, com o nome, as cores e os preços da sua casa. Sem app para o cliente baixar.</p>
+        <p class="note">Esta é uma demonstração. No seu cardápio entram os seus pratos, com a sua marca e os seus preços. O cliente não precisa baixar nada.</p>
       </div>
     </div>
   </section>
@@ -577,7 +588,6 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/DrawSVGPlugin.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 (() => {
   const root = document.documentElement;
@@ -618,8 +628,16 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
       s.src = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js';
       s.onload = () => customElements.whenDefined('model-viewer').then(res); s.onerror = rej; document.head.appendChild(s);
     });
-    const drawQr = () => {
-      if (mobile || !window.qrcode) return;
+    /* Gerador de QR code: só carrega no computador, que é onde o QR aparece */
+    let qrLib;
+    const loadQr = () => qrLib ??= new Promise(res => {
+      if (window.qrcode) return res();
+      const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+      s.onload = res; s.onerror = res; document.head.appendChild(s);
+    });
+    const drawQr = async () => {
+      if (mobile) return;
+      await loadQr(); if (!window.qrcode) return;
       const url = new URL(location.href); url.hash = 'demo'; url.search = `?prato=${current}`;
       const code = qrcode(0, 'M'); code.addData(url.toString()); code.make();
       root.querySelector('[data-qr-code]').innerHTML = code.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
