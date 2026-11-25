@@ -101,8 +101,8 @@ html[data-page-ready] main { visibility: visible; }
 .kicker .hd { box-shadow: 0 0 0 .25rem rgba(169,227,207,.45); }
 @keyframes pulse { 50% { box-shadow: 0 0 0 .5rem rgba(169,227,207,0); } }
 @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-html[data-page-ready] .kicker { animation: up 1s var(--ease) .9s both; }
-html[data-page-ready] .btn-p { animation: up 1s var(--ease) 1.5s both; }
+html[data-page-ready] .kicker { animation: up .6s var(--ease) .3s both; }
+html[data-page-ready] .btn-p { animation: up .6s var(--ease) .45s both; }
 .hero .fade { position: absolute; left: 0; right: 0; bottom: 0; height: 22%; background: linear-gradient(rgba(244,245,242,0), var(--porcelana)); pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { html[data-page-ready] .kicker, html[data-page-ready] .btn-p { animation: none; opacity: 1; } .kicker .hd { animation: none; } }
 .cta .txt { position: relative; }
@@ -736,7 +736,7 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
       const s = splitFor(el, mode);
       el.style.visibility = 'visible';
       const targets = mode === 'chars' ? s.chars : s.lines;
-      gsap.from(targets, { yPercent: 135, duration: 1, ease: 'expo.out', stagger: mode === 'chars' ? 0.07 * 0.25 : 0.07, delay: baseDelay + extra,
+      gsap.from(targets, { yPercent: 135, duration: .7, ease: 'expo.out', stagger: mode === 'chars' ? 0.012 : 0.05, delay: baseDelay + extra,
         onComplete: () => el.dispatchEvent(new CustomEvent('reveal:done')) });
     });
   }
@@ -911,12 +911,12 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
     const tl = gsap.timeline();
     tl.set(main, { autoAlpha: 0 })
       .set(path, { drawSVG: '0% 100%', strokeWidth: '30%' })
-      .addLabel('reveal', 0.4)
+      .addLabel('reveal', 0.1)
       .set(main, { autoAlpha: 1 }, 'reveal')
-      .call(() => { textReveal(0.6); init(); drawAlways(document.querySelector('.cta .txt'), 1.3); }, null, 'reveal')
-      .to(path, { drawSVG: '100% 100%', strokeWidth: '5%', duration: 1.25, ease: 'power1.inOut', onComplete: () => wipe.setAttribute('data-transition-ready', '') }, 'reveal');
+      .call(() => { textReveal(0.1); init(); drawAlways(document.querySelector('.cta .txt'), 0.5); }, null, 'reveal')
+      .to(path, { drawSVG: '100% 100%', strokeWidth: '5%', duration: 0.6, ease: 'power1.inOut', onComplete: () => wipe.setAttribute('data-transition-ready', '') }, 'reveal');
   };
-  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]).then(start);
+  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 600))]).then(start);
 })();
 </script>
 </body>
