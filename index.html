@@ -3,617 +3,1021 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Previa · Cardápio em realidade aumentada para restaurantes</title>
+<meta name="description" content="Cardápio com realidade aumentada para restaurantes. O cliente aproxima o celular da placa na mesa e vê o prato em 3D, no tamanho real, antes de pedir." />
 <meta name="theme-color" content="#F4F5F2" />
+<link rel="canonical" href="https://rprevia.com/" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://rprevia.com/" />
+<meta property="og:title" content="Previa · Veja antes de pedir." />
+<meta property="og:description" content="Cardápio em realidade aumentada, placas NFC/QR e painel para restaurantes." />
+<meta property="og:image" content="https://rprevia.com/img/og.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23141A16' fill-rule='evenodd' d='M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z'/%3E%3Ccircle cx='32' cy='42' r='7' fill='%23A07C45'/%3E%3C/svg%3E" />
 <link rel="preload" as="image" href="img/hero-mesa-m.webp" media="(max-aspect-ratio: 1/1)" />
 <link rel="preload" as="image" href="img/hero-mesa.webp" media="(min-aspect-ratio: 1/1)" />
-<title>Previa: veja o prato antes de pedir</title>
-<meta name="description" content="Previa: cardápio em realidade aumentada, sites e plaquinhas NFC para restaurantes. Veja antes de pedir." />
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23141A16' fill-rule='evenodd' d='M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z'/%3E%3Ccircle cx='32' cy='42' r='7' fill='%23A07C45'/%3E%3C/svg%3E" />
-<meta property="og:type" content="website" />
-<meta property="og:locale" content="pt_BR" />
-<meta property="og:site_name" content="Previa" />
-<meta property="og:title" content="Previa: veja o prato antes de pedir" />
-<meta property="og:description" content="Cardápio em realidade aumentada, site e plaquinhas NFC para restaurantes. Seus pratos em 3D, no tamanho real, em cima da mesa do cliente." />
-<meta property="og:image" content="https://previa-site-ten.vercel.app/img/og.jpg" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta name="twitter:card" content="summary_large_image" />
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Sora:wght@100..800&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono&family=Sora:wght@200;300;400&display=swap" />
 <style>
-/* Previa · manual v1.3. Layout e animações adaptados do modelo enviado (seção 1: topo).
-   Celular é o canal principal: cada regra de tela pequena foi pensada para toque, barra do navegador e áreas seguras. */
-:root {
-  --porcelana: #F4F5F2; --tinta: #141A16; --louro: #22402F; --salvia: #8DA392;
-  --latao: #A07C45; --halo: #A9E3CF; --pedra: #5F6660; --mesa: #E2E5E0; --branco: #FFFFFF;
-  --page: var(--porcelana);
-  --ease: cubic-bezier(.65,.05,0,1);
-  color-scheme: light;
+/* ---------- Identidade Previa 2.0 ---------- */
+:root{
+  --porcelana:#F4F5F2; --tinta:#141A16; --louro:#22402F; --salvia:#8DA392; --latao:#A07C45; --halo:#A9E3CF; --pedra:#5F6660;
+  --n100:#E9EBE7; --n200:#D5DAD4; --n300:#B9C0BA; --n400:#969E98; --n700:#3A413C; --n800:#232A25;
+  --ease:cubic-bezier(.2,.7,.2,1); --t:560ms;
+  --sora:'Sora',system-ui,sans-serif; --geist:'Geist',system-ui,sans-serif; --mono:'Geist Mono',ui-monospace,monospace;
+  --g:20px; --max:1360px; --nav:64px;
 }
-html { font-size: clamp(11px, calc(100vw / 100), 19px); }
-@media (max-width: 991px) { html { font-size: calc(100vw / 60); } }
-@media (max-width: 600px) { html { font-size: calc(100vw / 24.375); } }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
-img, video, svg { display: block; }
-body { background: var(--page); color: var(--tinta); font-family: "Sora", system-ui, sans-serif; overflow-x: clip;
-  transition: background-color .7s var(--ease); -webkit-font-smoothing: antialiased; }
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-main { visibility: hidden; }
-html[data-page-ready] main { visibility: visible; }
-[data-text-reveal], [data-scroll-reveal] { visibility: hidden; }
-:focus-visible { outline: 2px solid var(--latao); outline-offset: 3px; border-radius: 4px; }
-[hidden] { display: none !important; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:var(--nav)}
+body{margin:0;background:var(--porcelana);color:var(--tinta);font:400 16px/1.625 var(--geist);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img,video,svg{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+h1,h2,h3,h4,p{margin:0}
+:focus-visible{outline:2px solid var(--latao);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--g)}
+.h1{font:200 clamp(48px,13.4vw,128px)/.94 var(--sora);letter-spacing:-.055em}
+.h2{font:200 clamp(38px,9.6vw,76px)/1 var(--sora);letter-spacing:-.045em}
+.h3{font:300 clamp(22px,5.4vw,30px)/1.15 var(--sora);letter-spacing:-.03em}
+.lead{font-size:18px;line-height:1.55;color:var(--n700);max-width:34em}
+.small{font-size:13px;line-height:1.5;color:var(--pedra)}
+.mono{font:400 12px/1.4 var(--mono);letter-spacing:.02em}
+.wm{font:400 22px/1 var(--sora);letter-spacing:-.045em;text-decoration:none;display:inline-flex;align-items:center;gap:9px}
+.wm svg{width:26px;height:26px}
+.wm .i{position:relative;display:inline-block}
+.wm .i::after{content:"";position:absolute;width:.16em;height:.16em;border-radius:50%;background:var(--latao);left:50%;transform:translateX(-50%);top:.075em}
 
-/* Tipografia: Sora pesada contra Sora leve, no lugar de grotesca + serifa */
-.h-hero { font-family: "Sora"; font-weight: 700; font-size: 6.4rem; line-height: .88em; letter-spacing: -.055em; }
-.alt { font-weight: 200; letter-spacing: -.045em; }
-.eyebrow-m { font-weight: 300; font-size: 1.8rem; line-height: 1em; letter-spacing: -.035em; }
-.para { font-family: "Geist"; font-size: 1.05rem; line-height: 1.45; letter-spacing: -.01em; }
-.lede { font-family: "Geist"; font-weight: 400; font-size: 1.05rem; line-height: 1.45; letter-spacing: -.01em; color: var(--pedra); max-width: 30em; margin-top: -.5rem; text-wrap: balance; }
-.line { padding-bottom: .08em; margin-bottom: -.08em; }
-@media (max-width: 991px) { .h-hero { font-size: 6.4rem; } }
-@media (max-width: 600px) { .h-hero { font-size: 4.4rem; } .lede { font-size: max(15px, 1.05rem); max-width: 20em; margin-top: -.25rem; } .eyebrow-m { font-size: 1.75rem; } }
+/* Botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 24px;border-radius:99px;font:500 15px/1 var(--geist);text-decoration:none;transition:background .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease);white-space:nowrap}
+.btn svg{width:20px;height:20px;flex:none}
+.btn-p{background:var(--louro);color:var(--porcelana)}
+.btn-p:hover{background:var(--tinta)}
+.btn-g{box-shadow:inset 0 0 0 1px var(--n300)}
+.btn-g:hover{box-shadow:inset 0 0 0 1px var(--tinta)}
+.btn-l{background:var(--porcelana);color:var(--louro)}
+.btn-l:hover{background:#fff}
+.btn:active{transform:scale(.97)}
 
-/* 5.1 Abertura: rabisco em Louro */
-.wipe { position: fixed; inset: 0; z-index: 1000; pointer-events: none; overflow: clip; }
-.wipe svg { width: 100%; height: 100%; }
-.wipe path { fill: none; stroke: var(--louro); stroke-linecap: round; stroke-linejoin: round; stroke-width: 0; }
-.wipe[data-transition-ready] { display: none; }
+/* Revelação ao rolar */
+[data-r]{opacity:0;transform:translateY(24px);transition:opacity var(--t) var(--ease),transform var(--t) var(--ease)}
+[data-r].in{opacity:1;transform:none}
+.no-js [data-r]{opacity:1;transform:none}
+.words .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.words .w>span{display:inline-block;transform:translateY(105%);transition:transform 900ms var(--ease)}
+.words.in .w>span{transform:none}
 
-/* 5.3 Navegação */
-.nav { position: fixed; inset: 0 0 auto; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; pointer-events: none; }
-.nav > * { pointer-events: auto; }
-/* Logo, menu e contato em cápsulas brancas: a marca fica legível sobre vídeo, fotos e o tema escuro */
-.nav .logo { height: 2.5rem; padding: 0 1rem 0 .7rem; background: var(--branco); border-radius: 99rem; font-size: 1.3rem; gap: .4rem; }
-.nav .logo svg { width: 1.45rem; height: 1.45rem; }
-.nav .logo, .pill, .contact { box-shadow: 0 .6rem 1.6rem -1rem rgba(20,26,22,.35), inset 0 0 0 1px rgba(20,26,22,.05); transition: box-shadow .4s var(--ease); }
-.logo { display: inline-flex; align-items: center; gap: .55rem; color: var(--tinta); font-size: 2.1rem; }
-.logo svg { width: 2.3rem; height: 2.3rem; }
-.word { font-weight: 400; letter-spacing: -.04em; line-height: 1; }
-.word .i { position: relative; display: inline-block; }
-.word .i::after { content: ""; position: absolute; width: .17em; height: .17em; border-radius: 50%; background: var(--latao); left: 50%; transform: translateX(-50%); top: .06em; }
-.pill { position: absolute; left: 50%; top: 1rem; translate: -50% 0; height: 2.5rem; padding: 0 1.1rem; gap: 1.4rem; background: var(--branco); border-radius: 99rem; display: flex; align-items: center; }
-.navlink { position: relative; display: flex; flex-direction: column; font-weight: 600; font-size: .85rem; letter-spacing: -.02em; }
-.draw-box { position: absolute; left: 0; top: 100%; width: 100%; height: .5em; color: var(--latao); pointer-events: none; }
-.draw-box svg { width: 100%; height: 100%; overflow: visible; }
-.contact { height: 2.5rem; padding: 0 1.1rem; gap: .45rem; background: var(--branco); border-radius: 99rem; display: flex; align-items: center; font-weight: 600; font-size: .85rem; letter-spacing: -.02em; }
-.contact .dot { width: .45rem; height: .45rem; border-radius: 50%; background: var(--latao); }
-@media (max-width: 991px) { .pill { display: none; } }
-@media (max-width: 600px) { .nav { padding: calc(.75rem + env(safe-area-inset-top)) 1rem .75rem; } .nav .logo { height: 44px; font-size: 21px; padding: 0 1rem 0 .7rem; } .nav .logo svg { width: 24px; height: 24px; } .contact { height: 44px; font-size: 15px; padding: 0 1rem; } }
+/* ---------- Navegação ---------- */
+.nav{position:fixed;inset:0 0 auto;z-index:50;height:var(--nav);transition:background .4s var(--ease),box-shadow .4s var(--ease),transform .5s var(--ease)}
+.nav.solid{background:rgba(244,245,242,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--n200)}
+.nav.hide{transform:translateY(-100%)}
+.nav .wrap{height:100%;display:flex;align-items:center;gap:24px}
+.nav-links{display:none;gap:28px;margin-left:auto;font-size:14px}
+.nav-links a{text-decoration:none;color:var(--n700)}
+.nav-links a:hover{color:var(--tinta)}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:6px}
+.lang{display:flex;font:400 12px/1 var(--mono);border-radius:99px;box-shadow:inset 0 0 0 1px var(--n300);padding:3px}
+.lang button{padding:7px 9px;border-radius:99px;color:var(--pedra);transition:background .3s,color .3s}
+.lang button[aria-pressed=true]{background:var(--tinta);color:var(--porcelana)}
+.nav .btn{height:38px;padding:0 14px;font-size:13.5px}
+.nav .btn span{display:none}
 
-/* 5.4 Topo */
-.hero { position: relative; height: 100vh; height: 100svh; min-height: 34rem; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 50%; }
-.hero .veil { position: absolute; inset: 0; background: radial-gradient(62% 58% at 50% 48%, rgba(244,245,242,.9) 28%, rgba(244,245,242,.45) 62%, rgba(244,245,242,.05) 100%); pointer-events: none; }
-.hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 1.4rem; margin-top: -1.5rem; text-align: center; }
-.cta { display: inline-flex; align-items: center; gap: .45em; font-weight: 300; font-size: 1.2rem; letter-spacing: -.03em; line-height: 1; min-height: 44px; }
-.cta .arrow { rotate: -90deg; }
-.actions { display: flex; align-items: center; gap: 1.75rem; margin-top: .35rem; }
-.btn-p { display: inline-flex; align-items: center; gap: .7rem; height: 3rem; padding: 0 1.4rem; border-radius: 99rem; background: var(--louro); color: var(--porcelana); font-family: "Geist"; font-weight: 600; font-size: .95rem; letter-spacing: -.01em; box-shadow: 0 1.2rem 2.4rem -1.4rem rgba(34,64,47,.8); transition: background-color .3s var(--ease), transform .4s var(--ease); }
-.btn-p:hover { background: #2C5240; transform: translateY(-2px); }
-.hd { width: .55rem; height: .55rem; border-radius: 50%; background: var(--halo); box-shadow: 0 0 0 .3rem rgba(169,227,207,.28); flex: none; }
-.kicker { display: inline-flex; align-items: center; gap: .6rem; padding: .45rem .9rem; border-radius: 99rem; background: rgba(255,255,255,.86); box-shadow: inset 0 0 0 1px rgba(20,26,22,.07); font-family: "Geist"; font-weight: 500; font-size: .8rem; letter-spacing: .01em; color: var(--louro); opacity: 0; }
-.kicker .hd { box-shadow: 0 0 0 .25rem rgba(169,227,207,.45); }
-@keyframes pulse { 50% { box-shadow: 0 0 0 .5rem rgba(169,227,207,0); } }
-@keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-html[data-page-ready] .kicker { animation: up .6s var(--ease) .3s both; }
-html[data-page-ready] .btn-p { animation: up .6s var(--ease) .45s both; }
-.hero .fade { position: absolute; left: 0; right: 0; bottom: 0; height: 22%; background: linear-gradient(rgba(244,245,242,0), var(--porcelana)); pointer-events: none; }
-@media (prefers-reduced-motion: reduce) { html[data-page-ready] .kicker, html[data-page-ready] .btn-p { animation: none; opacity: 1; } .kicker .hd { animation: none; } }
-.cta .txt { position: relative; }
-.cta .draw-box { top: 112%; height: .6em; }
-.arrow { width: 1em; height: 1em; background: var(--louro); color: var(--branco); display: grid; place-items: center; overflow: hidden; border-radius: .15em; }
-.arrow .twin { position: relative; width: .5em; height: .46em; transition: transform .525s cubic-bezier(.175,.885,.32,1.275); }
-.arrow .twin svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.arrow .twin svg + svg { top: -100%; }
-.cta:hover .arrow .twin { transform: translateY(100%); }
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;background:#E9E8E3}
+.hero-bg{position:absolute;inset:0}
+.hero-bg video{width:100%;height:100%;object-fit:cover}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(244,245,242,.8) 0%,rgba(244,245,242,.25) 45%,rgba(244,245,242,0) 62%)}
+.hero-c{position:relative;padding-top:calc(var(--nav) + 28px);flex:1;display:flex;flex-direction:column}
+.hero-g{flex:1;display:flex;flex-direction:column}
+.hero h1{max-width:9em}
+.hero .lead{margin-top:18px;max-width:24em;font-size:16px;line-height:1.55}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.hero-dish{position:relative;flex:1;min-height:200px;display:grid;place-items:center;margin-top:0}
+.dish-land{position:relative;width:min(72vw,520px);aspect-ratio:600/480}
+.dish-land img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:translateY(-34%) scale(.92);transition:opacity .5s var(--ease),transform 900ms var(--ease)}
+.dish-land img.on{opacity:1;transform:none}
+.dish-land img.out{opacity:0;transform:translateY(6%) scale(1.02);transition-duration:.45s}
+.halo{position:absolute;left:50%;top:70%;width:86%;aspect-ratio:3/1;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid var(--halo);opacity:0;pointer-events:none}
+.halo.ping{animation:ping 1.2s var(--ease)}
+@keyframes ping{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.15)}}
+.dish-tag{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;background:rgba(244,245,242,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:8px 14px;border-radius:99px;white-space:nowrap;font-size:13px}
+.dish-tag i{width:7px;height:7px;border-radius:50%;background:var(--latao)}
+.dish-tag .mono{color:var(--pedra)}
+.hero-foot{position:relative;display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;padding-top:18px;font-size:13px;color:var(--n700)}
+.hero-foot .scroll{display:flex;gap:8px;align-items:center}
+.hero-foot .scroll::before{content:"";width:1px;height:28px;background:var(--tinta);animation:drip 2.4s var(--ease) infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
-.marquee { position: absolute; left: 0; bottom: 1.25rem; width: 100%; z-index: 2; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, #0000, #000 12%, #000 88%, #0000); mask-image: linear-gradient(90deg, #0000, #000 12%, #000 88%, #0000); }
-.marquee .scroll { display: flex; margin-left: -10%; width: 120%; }
-.marquee .coll { display: flex; flex: none; }
-.mk { display: flex; align-items: center; gap: .7rem; margin: 0 1.3rem; padding: .8rem 0; color: var(--louro); white-space: nowrap; font-family: "Geist"; font-weight: 500; font-size: .9rem; letter-spacing: -.01em; }
-.mk span { color: var(--tinta); opacity: .78; }
-.mk::after { content: ""; width: .3rem; height: .3rem; border-radius: 50%; background: var(--latao); margin-left: 2.5rem; opacity: .7; }
-.mk svg { width: 1.3rem; height: 1.3rem; overflow: visible; }
-.mk path, .mk circle, .mk rect, .mk ellipse, .mk line { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: butt; stroke-linejoin: miter; }
-.mk .fill { fill: currentColor; stroke: none; }
-.mk .acc { fill: var(--latao); stroke: none; }
-@media (max-width: 600px) {
-  .hero { min-height: 32rem; }
-  .hero video { object-position: left top; }
-  .hero .veil { background: linear-gradient(180deg, rgba(244,245,242,.55) 0%, rgba(244,245,242,0) 18%), radial-gradient(120% 55% at 50% 50%, rgba(244,245,242,.9) 35%, rgba(244,245,242,.4) 80%, rgba(244,245,242,.2)); }
-  .hero-content { gap: 1.75rem; margin-top: 0; padding: 0 1rem; }
-  .actions { flex-direction: column; gap: 1rem; }
-  .btn-p { height: 52px; font-size: 16px; padding: 0 1.5rem; }
-  .cta { font-size: 1.2rem; }
-  .kicker { font-size: 13px; }
-  .marquee { bottom: calc(1rem + env(safe-area-inset-bottom)); }
-  .mk { font-size: 14px; gap: .5rem; margin: 0 .9rem; }
-  .mk svg { width: 1.35rem; height: 1.35rem; }
-  .mk::after { margin-left: 1.8rem; }
+/* ---------- Prova ---------- */
+.proof{padding:96px 0 88px}
+.proof-g{display:grid;gap:28px}
+.big{font:200 clamp(84px,27vw,240px)/.86 var(--sora);letter-spacing:-.06em;display:flex;align-items:baseline;gap:.08em}
+.big small{font-size:.32em;letter-spacing:-.03em;color:var(--pedra)}
+.big .from{color:var(--n300)}
+.big .arrow{font-size:.36em;color:var(--latao);align-self:center}
+.facts{display:grid;margin-top:64px;border-top:1px solid var(--n200)}
+.facts>div{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:20px 0;border-bottom:1px solid var(--n200)}
+.facts b{font:300 17px/1.4 var(--sora);letter-spacing:-.02em}
+.facts span{color:var(--n700);font-size:15px;line-height:1.55}
+
+/* ---------- Demo ---------- */
+.demo{padding:88px 0 96px;background:var(--n100)}
+.demo-head{display:grid;gap:18px;margin-bottom:40px}
+.demo-g{display:grid;gap:28px}
+.stage3d{position:relative;aspect-ratio:1/1;border-radius:22px;overflow:hidden;background:#E7E6E1 url(img/hero-mesa-m.webp) center/cover}
+.stage3d model-viewer{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent;background:transparent}
+.stage3d .load{position:absolute;left:20px;right:20px;bottom:18px;height:2px;background:rgba(20,26,22,.12);border-radius:2px;overflow:hidden;transition:opacity .4s}
+.stage3d .load::after{content:"";position:absolute;inset:0;width:var(--p,0%);background:var(--louro);transition:width .3s}
+.stage3d .load[data-done]{opacity:0}
+.stage3d .hint{position:absolute;top:16px;left:16px;font-size:12.5px;color:var(--n700);background:rgba(244,245,242,.85);padding:6px 12px;border-radius:99px;display:flex;gap:7px;align-items:center;pointer-events:none}
+.stage3d .hint svg{width:16px;height:16px}
+.menu{list-style:none;margin:0;padding:0;border-top:1px solid var(--n300)}
+.menu button{width:100%;display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;text-align:left;padding:14px 0;border-bottom:1px solid var(--n300)}
+.menu img{width:56px;height:56px;border-radius:50%;object-fit:cover;transition:transform .5s var(--ease),box-shadow .4s var(--ease)}
+.menu .nm{font:300 19px/1.2 var(--sora);letter-spacing:-.02em;display:block}
+.menu .dt{font-size:13px;color:var(--pedra);line-height:1.4;display:block;margin-top:3px}
+.menu .pr{font:400 13px/1 var(--mono);color:var(--n700)}
+.menu button[aria-checked=true] img{transform:scale(1.06);box-shadow:0 0 0 2px var(--n100),0 0 0 3.5px var(--latao)}
+.menu button[aria-checked=false] .nm{color:var(--n700)}
+.menu button:hover .nm{color:var(--tinta)}
+.ar-act{margin-top:22px;display:grid;gap:14px}
+.ar-act .btn{width:100%;white-space:normal;text-align:center;height:auto;min-height:52px;padding:14px 20px;line-height:1.3}
+.ar-act .btn[disabled]{opacity:.55;cursor:default}
+.qr{display:flex;gap:20px;align-items:center;padding:18px;border-radius:18px;background:var(--porcelana)}
+.qr[hidden]{display:none}
+.qr-code{width:104px;height:104px;flex:none;padding:8px;background:#fff;border-radius:10px}
+.qr-code svg{width:100%;height:100%}
+.qr p{font-size:14px;line-height:1.5;color:var(--n700)}
+.qr b{display:block;font:300 18px/1.25 var(--sora);color:var(--tinta);margin-bottom:4px;letter-spacing:-.02em;font-weight:300}
+
+/* ---------- Placa ---------- */
+.placa{background:var(--louro);color:var(--porcelana);position:relative}
+.placa-intro{padding:96px 0 0}
+.placa-intro .lead{color:rgba(244,245,242,.72);margin-top:18px}
+.story{height:420svh;position:relative}
+.story-in{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.story-g{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;align-items:center;width:100%}
+.pstage{position:relative;width:350px;height:380px;justify-self:center;transform:scale(var(--ss,1));transform-origin:50% 40%}
+.plaque{position:absolute;left:0;top:58px;width:168px;height:236px;border-radius:16px;background:var(--porcelana);color:var(--tinta);padding:18px 16px 12px;display:flex;flex-direction:column;align-items:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
+.plaque .rn{font:300 15px/1.1 var(--sora);letter-spacing:-.02em;text-align:center}
+.plaque .pq{width:92px;height:92px;margin:14px 0 10px}
+.plaque .pq svg{width:100%;height:100%}
+.plaque .nfc{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--n700)}
+.plaque .nfc svg{width:16px;height:16px}
+.plaque .pb{margin-top:auto;font:400 8.5px/1 var(--geist);color:var(--n400);letter-spacing:.01em}
+.waves{position:absolute;left:150px;top:176px;width:0;height:0}
+.waves i{position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;border:1.5px solid var(--halo);opacity:0}
+.pstage.tap .waves i{animation:wave 1.8s var(--ease) infinite}
+.pstage.tap .waves i:nth-child(2){animation-delay:.4s}
+.pstage.tap .waves i:nth-child(3){animation-delay:.8s}
+@keyframes wave{0%{opacity:.9;transform:scale(.15)}100%{opacity:0;transform:scale(1)}}
+.phone{position:absolute;left:172px;top:6px;width:176px;height:362px;border-radius:30px;background:var(--tinta);padding:6px;box-shadow:0 40px 70px -24px rgba(0,0,0,.55);transition:transform 900ms var(--ease)}
+.pstage[data-s="0"] .phone{transform:translate(70px,30px) rotate(9deg)}
+.pstage[data-s="0"].tap .phone{transform:translate(-26px,44px) rotate(-7deg)}
+.phone .scr{position:relative;width:100%;height:100%;border-radius:24px;overflow:hidden;background:var(--porcelana);color:var(--tinta)}
+.phone .scr::before{content:"";position:absolute;top:7px;left:50%;width:46px;height:13px;margin-left:-23px;border-radius:9px;background:var(--tinta);z-index:5}
+.scr .v{position:absolute;inset:0;opacity:0;transition:opacity .5s var(--ease),transform .7s var(--ease);transform:translateY(14px)}
+.pstage[data-s="0"] .v0,.pstage[data-s="1"] .v1,.pstage[data-s="2"] .v2,.pstage[data-s="3"] .v3{opacity:1;transform:none}
+.v0{background:var(--n800);display:grid;place-items:center}
+.v0 span{font:200 34px/1 var(--sora);color:rgba(244,245,242,.85);letter-spacing:-.04em}
+.v1{padding:32px 12px 12px}
+.v1 .rh{font:300 14px/1 var(--sora);letter-spacing:-.02em;display:flex;justify-content:space-between;align-items:center}
+.v1 .rh .mono{font-size:8px;color:var(--pedra)}
+.v1 .tabs{display:flex;gap:5px;margin:12px 0 10px;font-size:9px}
+.v1 .tabs span{padding:4px 8px;border-radius:99px;box-shadow:inset 0 0 0 1px var(--n200)}
+.v1 .tabs span:first-child{background:var(--tinta);color:var(--porcelana);box-shadow:none}
+.v1 .it{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--n200);font-size:10px;line-height:1.3}
+.v1 .it img{width:44px;height:44px;border-radius:8px;object-fit:cover}
+.v1 .it b{display:block;font:300 11.5px/1.2 var(--sora)}
+.v1 .it em{font:normal 9px var(--mono);color:var(--pedra)}
+.v1 .it .ar{display:inline-flex;gap:3px;align-items:center;margin-top:3px;font-size:8.5px;color:var(--louro)}
+.v1 .it .ar i{width:7px;height:7px;border-radius:50%;border:1.2px solid var(--louro)}
+.v2{background:#E7E6E1 url(img/hero-mesa-m.webp) center/cover}
+.v2 img{position:absolute;left:-6%;width:112%;max-width:none;top:34%}
+.v2 .ring{position:absolute;left:6%;right:6%;top:62%;aspect-ratio:3/1;border-radius:50%;border:1.5px solid var(--halo);animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.06);opacity:.5}}
+.v2 .chip{position:absolute;left:10px;right:10px;bottom:12px;background:rgba(244,245,242,.92);border-radius:12px;padding:9px 10px;font-size:9.5px;line-height:1.35}
+.v2 .chip b{font:300 12px/1.2 var(--sora);display:block}
+.v2 .chip span{font-family:var(--mono);color:var(--pedra)}
+.v3{padding:34px 12px 12px;display:flex;flex-direction:column;gap:9px}
+.v3 .card{border-radius:12px;background:#fff;padding:11px;font-size:9.5px;line-height:1.35}
+.v3 .card b{font:300 12.5px/1.2 var(--sora);display:block;margin-bottom:5px}
+.v3 .stars{display:flex;gap:3px;margin-bottom:4px}
+.v3 .stars svg{width:15px;height:15px;fill:var(--latao)}
+.v3 .stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:4px}
+.v3 .stamps i{aspect-ratio:1;border-radius:50%;box-shadow:inset 0 0 0 1px var(--n300)}
+.v3 .stamps i.on{background:var(--louro);box-shadow:none}
+.v3 .gift{background:var(--tinta);color:var(--porcelana)}
+.steps{position:relative;margin-top:14px;min-height:178px}
+.step{position:absolute;inset:0 0 auto;opacity:0;transform:translateY(16px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.step.on{opacity:1;transform:none}
+.step .n{font:400 12px/1 var(--mono);color:var(--salvia);display:block;margin-bottom:10px}
+.step p{margin-top:10px;color:rgba(244,245,242,.74);font-size:16px;line-height:1.55;max-width:28em}
+.step .tag{display:inline-block;margin-top:10px;font-size:12.5px;color:var(--halo)}
+.dots{display:flex;gap:6px}
+.dots i{height:2px;flex:1;max-width:56px;background:rgba(244,245,242,.18);border-radius:2px;overflow:hidden;position:relative}
+.dots i::after{content:"";position:absolute;inset:0;background:var(--porcelana);transform:scaleX(var(--f,0));transform-origin:left}
+.placa-out{padding:24px 0 96px;display:grid;gap:28px}
+.placa-out .row{display:flex;flex-wrap:wrap;gap:10px}
+.mat{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(244,245,242,.16)}
+.mat div{padding:18px 12px 0 0;font-size:14px;line-height:1.45;color:rgba(244,245,242,.7)}
+.mat b{display:block;font:300 17px/1.3 var(--sora);color:var(--porcelana);letter-spacing:-.02em;margin-bottom:4px}
+
+/* ---------- Canais ---------- */
+.canais{padding:104px 0;overflow:hidden}
+.canais-g{display:grid;gap:44px;align-items:center}
+.seg{display:inline-flex;padding:4px;border-radius:99px;background:var(--n100);position:relative;margin-top:26px}
+.seg button{position:relative;z-index:1;padding:11px 20px;border-radius:99px;font-size:14px;font-weight:500;color:var(--n700);transition:color .4s var(--ease)}
+.seg button[aria-pressed=true]{color:var(--porcelana)}
+.seg .pill{position:absolute;top:4px;bottom:4px;left:0;border-radius:99px;background:var(--tinta);transition:transform .5s var(--ease),width .5s var(--ease)}
+.modes{margin-top:26px;display:grid;border-top:1px solid var(--n200)}
+.modes>div{padding:18px 0;border-bottom:1px solid var(--n200);display:grid;grid-template-columns:24px 1fr;gap:14px;transition:opacity .4s}
+.modes svg{width:24px;height:24px;margin-top:2px}
+.modes b{font:300 18px/1.3 var(--sora);letter-spacing:-.02em;display:block}
+.modes span{font-size:15px;color:var(--n700);line-height:1.55}
+.modes .opt{font-size:12.5px;color:var(--latao);display:block;margin-top:6px}
+.canais[data-m=mesa] .modes .md-d,.canais[data-m=delivery] .modes .md-m{opacity:.35}
+.phone2{position:relative;width:min(300px,78vw);aspect-ratio:300/620;margin:0 auto;border-radius:44px;background:var(--tinta);padding:9px;box-shadow:0 50px 80px -40px rgba(20,26,22,.5)}
+.phone2 .scr{position:relative;height:100%;border-radius:36px;overflow:hidden;background:var(--porcelana)}
+.phone2 .scr::before{content:"";position:absolute;top:10px;left:50%;width:84px;height:24px;margin-left:-42px;border-radius:14px;background:var(--tinta);z-index:5}
+.phone2 .ph{height:50%;background:url(img/det-pizza.webp) center 40%/cover;position:relative}
+.phone2 .ph .badge{position:absolute;left:14px;bottom:14px;background:rgba(244,245,242,.9);border-radius:99px;padding:6px 11px;font-size:11.5px;display:flex;gap:6px;align-items:center}
+.phone2 .ph .badge i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--louro)}
+.phone2 .bd{padding:16px 18px}
+.phone2 .rest{font-size:11.5px;color:var(--pedra);display:flex;justify-content:space-between}
+.phone2 h4{margin:8px 0 4px;font:300 23px/1.1 var(--sora);letter-spacing:-.03em}
+.phone2 .ds{font-size:12.5px;line-height:1.45;color:var(--n700)}
+.phone2 .pz{font:400 13px var(--mono);margin-top:10px}
+.acts{position:absolute;left:14px;right:14px;bottom:16px;height:100px}
+.acts>div{position:absolute;inset:auto 0 0;display:grid;gap:7px;transition:opacity .45s var(--ease),transform .6s var(--ease)}
+.acts .b{height:44px;border-radius:99px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;font-weight:500}
+.acts .b svg{width:18px;height:18px}
+.acts .b1{background:var(--louro);color:var(--porcelana)}
+.acts .b2{box-shadow:inset 0 0 0 1px var(--n300)}
+.acts .duo{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.acts .duo .b{font-size:12px;font-weight:400;height:38px}
+.canais[data-m=mesa] .a-d,.canais[data-m=delivery] .a-m{opacity:0;transform:translateY(18px);pointer-events:none}
+
+/* ---------- Painel ---------- */
+.painel{padding:104px 0;background:var(--n100)}
+.painel-head{display:grid;gap:18px}
+.pg{display:grid;gap:16px;margin-top:44px}
+.board{background:var(--porcelana);border-radius:22px;padding:18px}
+.board-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;font-size:12.5px;color:var(--pedra)}
+.board-top b{font:300 18px/1 var(--sora);color:var(--tinta);letter-spacing:-.02em}
+.dr{display:grid;grid-template-columns:44px 1fr auto auto;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--n200);transition:opacity .5s var(--ease)}
+.dr img{width:44px;height:44px;border-radius:10px;object-fit:cover}
+.dr .nm{font:300 15px/1.2 var(--sora);letter-spacing:-.01em}
+.dr .pr{font:400 12.5px var(--mono);color:var(--n700);margin-top:3px;display:flex;gap:2px;align-items:center}
+.dr .pr .v{padding:2px 4px;margin:-2px -4px;border-radius:4px;transition:background .3s}
+.dr .pr .v.edit{background:rgba(169,227,207,.5)}
+.dr .pr .caret{width:1px;height:13px;background:var(--tinta);opacity:0;margin-left:4px}
+.dr .pr .v.edit+.caret{opacity:1;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.tg{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--pedra);justify-content:flex-end}
+.tg i{width:34px;height:20px;border-radius:99px;background:var(--louro);position:relative;transition:background .35s var(--ease)}
+.tg i::after{content:"";position:absolute;top:3px;left:17px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .35s var(--ease)}
+.tg.off i{background:var(--n300)}
+.tg.off i::after{left:3px}
+.tg>span{min-width:58px;text-align:right}
+.eye{width:28px;height:28px;display:grid;place-items:center;color:var(--pedra)}
+.eye svg{width:18px;height:18px}
+.dr.hid{opacity:.35}
+.toast{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12.5px;color:var(--louro);opacity:0;transform:translateY(6px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.toast.on{opacity:1;transform:none}
+.toast i{width:7px;height:7px;border-radius:50%;background:var(--halo);box-shadow:0 0 0 3px rgba(169,227,207,.35)}
+.cap{background:var(--tinta);color:var(--porcelana);border-radius:22px;padding:22px;display:grid;gap:18px}
+.cap svg.orb{width:100%;height:auto;max-height:240px}
+.cap ol{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:c}
+.cap li{display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:15px;line-height:1.45;color:rgba(244,245,242,.5);counter-increment:c;transition:color .4s}
+.cap li::before{content:"0" counter(c);font:400 12px/22px var(--mono);color:var(--salvia)}
+.cap li.on{color:var(--porcelana)}
+
+/* ---------- Dados ---------- */
+.dados{padding:104px 0}
+.dash{margin-top:44px;border-radius:22px;box-shadow:inset 0 0 0 1px var(--n200);padding:18px;display:grid;gap:22px}
+.dash-top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+.dash-top .small{font-family:var(--mono);font-size:11.5px}
+.fl{display:inline-flex;padding:3px;border-radius:99px;background:var(--n100)}
+.fl button{padding:8px 14px;border-radius:99px;font-size:13px;color:var(--n700);transition:background .3s,color .3s}
+.fl button[aria-pressed=true]{background:var(--tinta);color:var(--porcelana)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--n200)}
+.kpi{padding:16px 0 14px;border-bottom:1px solid var(--n200)}
+.kpi:nth-child(odd){border-right:1px solid var(--n200);padding-right:12px}
+.kpi:nth-child(even){padding-left:16px}
+.kpi .k{font-size:12.5px;color:var(--pedra)}
+.kpi .val{font:200 clamp(30px,8vw,44px)/1.1 var(--sora);letter-spacing:-.04em;margin-top:4px;font-variant-numeric:tabular-nums}
+.chart-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.chart-h b{font:300 18px/1.3 var(--sora);letter-spacing:-.02em}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--n700)}
+.legend>span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px}
+.bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;height:200px;align-items:end;margin-top:14px;border-bottom:1px solid var(--n300);position:relative}
+.bars .d{height:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;position:relative}
+.bars .bm,.bars .bd2{width:min(16px,42%);border-radius:4px 4px 0 0;height:calc(var(--h) * 1%);transform:scaleY(0);transform-origin:bottom;transition:transform 900ms var(--ease),opacity .4s}
+.bars .bm{background:var(--louro)}
+.bars .bd2{background:var(--salvia)}
+.dash.in .bars .bm,.dash.in .bars .bd2{transform:none}
+.dash[data-f=mesa] .bd2,.dash[data-f=delivery] .bm{opacity:.12}
+.bars .d:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--tinta);color:var(--porcelana);font:400 11px/1.4 var(--mono);padding:6px 8px;border-radius:6px;white-space:pre;z-index:2;pointer-events:none}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px;font:400 11px var(--mono);color:var(--pedra);text-align:center}
+.side{display:grid;gap:12px;align-content:start}
+.insight{display:grid;gap:4px;padding:16px;border-radius:14px;background:var(--n100)}
+.insight b{font:300 17px/1.3 var(--sora);letter-spacing:-.02em}
+.insight span{font-size:14.5px;color:var(--n700);line-height:1.5}
+.dash-note{font-size:12.5px;color:var(--pedra);line-height:1.5}
+
+/* ---------- Para quem ---------- */
+.quem{padding:104px 0 96px;background:var(--n100);overflow:hidden}
+.strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 var(--g);padding:40px var(--g) 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.strip::-webkit-scrollbar{display:none}
+.strip figure{margin:0;flex:none;width:min(68vw,300px);scroll-snap-align:start}
+.strip .ph{aspect-ratio:560/695;border-radius:18px;overflow:hidden;background:var(--n200)}
+.strip img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease);-webkit-user-drag:none}
+.strip figure:hover img{transform:scale(1.04)}
+.strip figcaption{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;font:300 19px/1.2 var(--sora);letter-spacing:-.02em}
+.strip figcaption b{font-weight:300}
+.strip figcaption span{font:400 11.5px var(--mono);color:var(--pedra)}
+.strip-nav{display:none;gap:8px;margin-left:auto}
+.strip-nav button{width:46px;height:46px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--n300);display:grid;place-items:center;transition:box-shadow .3s}
+.strip-nav button:hover{box-shadow:inset 0 0 0 1px var(--tinta)}
+.strip-nav svg{width:18px;height:18px}
+
+/* ---------- Planos ---------- */
+.planos{padding:104px 0}
+.ptabs{display:flex;gap:6px;margin-top:36px}
+.ptabs button{flex:1;padding:12px 10px;border-radius:99px;font-size:14px;font-weight:500;box-shadow:inset 0 0 0 1px var(--n300);color:var(--n700);transition:background .3s,color .3s}
+.ptabs button[aria-selected=true]{background:var(--tinta);color:var(--porcelana);box-shadow:none}
+.ptable{margin-top:28px}
+.pcol{display:none}
+.pcol.on{display:block;animation:fadeUp .5s var(--ease)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}}
+.pcol .pn{font:200 44px/1 var(--sora);letter-spacing:-.045em}
+.pcol .pd{margin-top:10px;color:var(--n700);font-size:15px;line-height:1.5;min-height:3em}
+.pcol ul{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid var(--n200)}
+.pcol li{padding:13px 0 13px 28px;border-bottom:1px solid var(--n200);font-size:15px;line-height:1.45;position:relative}
+.pcol li::before{content:"";position:absolute;left:2px;top:18px;width:12px;height:6px;border-left:1.6px solid var(--louro);border-bottom:1.6px solid var(--louro);transform:rotate(-45deg)}
+.pcol li.inh{color:var(--pedra)}
+.pcol li.inh::before{border-color:var(--n400)}
+.pcol .btn{margin-top:24px;width:100%}
+.pcol .pp{margin-top:14px;font-size:13px;color:var(--pedra)}
+.pcol.feat .pn::after{content:"";display:inline-block;width:.16em;height:.16em;border-radius:50%;background:var(--latao);margin-left:.1em;vertical-align:.6em}
+.pnote{margin-top:36px;max-width:44em}
+
+/* ---------- Confiança + FAQ ---------- */
+.conf{padding:104px 0;border-top:1px solid var(--n200)}
+.conf-g{display:grid;gap:56px}
+.trust{display:grid;border-top:1px solid var(--n200);margin-top:36px}
+.trust div{padding:20px 0;border-bottom:1px solid var(--n200)}
+.trust b{font:300 20px/1.3 var(--sora);letter-spacing:-.02em;display:block}
+.trust span{display:block;margin-top:6px;font-size:15px;color:var(--n700);line-height:1.55}
+.faq details{border-bottom:1px solid var(--n200)}
+.faq details:first-of-type{border-top:1px solid var(--n200)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:20px 0;font:300 19px/1.35 var(--sora);letter-spacing:-.02em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{flex:none;width:14px;height:14px;position:relative;margin-top:6px}
+.faq summary i::before,.faq summary i::after{content:"";position:absolute;left:0;right:0;top:6.5px;height:1.5px;background:var(--tinta);transition:transform .4s var(--ease)}
+.faq summary i::after{transform:rotate(90deg)}
+.faq details[open] summary i::after{transform:rotate(0)}
+.faq details p{padding:0 32px 22px 0;color:var(--n700);font-size:15.5px;line-height:1.6}
+
+/* ---------- CTA final ---------- */
+.fim{background:var(--louro);color:var(--porcelana);padding:112px 0 0;overflow:hidden;position:relative}
+.fim .h1{max-width:10em;position:relative}
+.fim .lead{color:rgba(244,245,242,.75);margin-top:22px;position:relative}
+.fim .btn{margin-top:34px;height:60px;padding:0 30px;font-size:16px}
+.fim .alt{margin-top:18px;font-size:14px;color:rgba(244,245,242,.6)}
+.fim .alt a{color:var(--porcelana)}
+.rings{position:absolute;right:-110px;top:30px;width:380px;color:var(--porcelana);opacity:.08;pointer-events:none}
+.foot{margin-top:112px;border-top:1px solid rgba(244,245,242,.16);padding:28px 0 calc(96px + env(safe-area-inset-bottom));display:grid;gap:22px;font-size:13.5px;color:rgba(244,245,242,.62)}
+.foot .wm{color:var(--porcelana)}
+.foot nav{display:flex;flex-wrap:wrap;gap:8px 22px}
+.foot a{text-decoration:none}
+.foot a:hover{color:var(--porcelana)}
+.foot .lang{box-shadow:inset 0 0 0 1px rgba(244,245,242,.25)}
+.foot .lang button{color:rgba(244,245,242,.6)}
+.foot .lang button[aria-pressed=true]{background:var(--porcelana);color:var(--louro)}
+.foot-b{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+
+/* Barra fixa no celular */
+.mbar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;display:flex;gap:8px;transform:translateY(140%);transition:transform .6s var(--ease)}
+.mbar.on{transform:none}
+.mbar .btn{flex:1;height:54px;box-shadow:0 14px 30px -12px rgba(20,26,22,.5)}
+.mbar .btn-g{flex:none;width:54px;padding:0;background:var(--porcelana)}
+
+/* ---------- Telas maiores ---------- */
+@media (min-width:600px){
+  :root{--g:32px}
+  .nav .btn span{display:inline}
+  .facts{grid-template-columns:repeat(3,1fr);border-top:0}
+  .facts>div{grid-template-columns:1fr;border-top:1px solid var(--n200);border-bottom:0;padding-right:24px;gap:8px}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .kpi,.kpi:nth-child(odd),.kpi:nth-child(even){border-right:1px solid var(--n200);padding:16px 16px 14px}
+  .kpi:first-child{padding-left:0}.kpi:last-child{border-right:0}
 }
-
-/* Barra fixa no celular: o contato sempre a um toque */
-.mbar { display: none; }
-@media (max-width: 991px) {
-  .mbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display: flex; gap: .5rem; padding: .6rem max(1rem, env(safe-area-inset-left)) calc(.6rem + env(safe-area-inset-bottom));
-    background: rgba(244,245,242,.86); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); border-top: 1px solid rgba(20,26,22,.08);
-    transform: translateY(110%); transition: transform .5s var(--ease); }
-  .mbar[data-on] { transform: none; }
-  .mbar a { flex: 1; min-height: 48px; border-radius: 99rem; display: flex; align-items: center; justify-content: center; gap: .5rem; font-family: "Geist"; font-weight: 600; font-size: 16px; letter-spacing: -.01em; }
-  .mbar .ra { flex: .7; background: var(--branco); color: var(--tinta); box-shadow: inset 0 0 0 1px rgba(20,26,22,.12); }
-  .mbar .go { background: var(--louro); color: var(--porcelana); }
-  .mbar .go .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--halo); }
+@media (min-width:992px){
+  :root{--g:48px;--nav:76px}
+  body{font-size:17px}
+  .nav-links{display:flex}
+  .nav-r{margin-left:24px}
+  .hero-c{padding-top:calc(var(--nav) + 4vh)}
+  .hero-g{display:grid;grid-template-columns:5fr 6fr;align-items:center;gap:24px}
+  .hero .lead{font-size:19px}
+  .hero-dish{margin-top:0;height:100%}
+  .dish-land{width:min(46vw,680px)}
+  .hero-bg::after{background:linear-gradient(90deg,rgba(244,245,242,.82) 0%,rgba(244,245,242,.35) 38%,rgba(244,245,242,0) 60%)}
+  .proof{padding:152px 0 136px}
+  .proof-g{grid-template-columns:7fr 5fr;align-items:end;gap:48px}
+  .demo{padding:136px 0}
+  .demo-head{grid-template-columns:7fr 5fr;align-items:end;gap:48px;margin-bottom:56px}
+  .demo-g{grid-template-columns:7fr 5fr;gap:48px;align-items:start}
+  .stage3d{aspect-ratio:5/4;background-image:url(img/hero-mesa.webp)}
+  .placa-intro{padding:152px 0 0}
+  .placa-intro .wrap{display:grid;grid-template-columns:7fr 5fr;gap:48px;align-items:end}
+  .story-g{grid-template-columns:5fr 7fr;gap:48px}
+  .story-g .stx{order:-1}
+  .pstage{--ss:1.3}
+  .steps{min-height:250px;margin-top:22px}
+  .step .h2{font-size:72px}
+  .step p{font-size:18px}
+  .placa-out{grid-template-columns:7fr 5fr;align-items:end;padding:24px 0 152px;gap:48px}
+  .placa-out .row{justify-content:flex-end}
+  .canais,.painel,.dados,.planos,.conf{padding:152px 0}
+  .canais-g{grid-template-columns:6fr 5fr;gap:64px}
+  .phone2{width:330px}
+  .painel-head{grid-template-columns:7fr 5fr;align-items:end;gap:48px}
+  .pg{grid-template-columns:7fr 5fr;gap:24px;margin-top:64px}
+  .board{padding:26px 28px}
+  .dr{grid-template-columns:52px 1fr auto auto;gap:16px;padding:14px 0}
+  .dr img{width:52px;height:52px}
+  .dr .nm{font-size:17px}
+  .cap{padding:28px}
+  .dash{padding:28px;grid-template-columns:8fr 4fr;gap:28px 40px;margin-top:64px}
+  .dash-top,.kpis{grid-column:1/-1}
+  .bars{height:240px;gap:16px}.days{gap:16px}
+  .quem{padding:152px 0 136px}
+  .quem-h{display:flex;align-items:flex-end}
+  .strip{padding:56px max(var(--g),calc((100vw - var(--max))/2 + var(--g))) 8px;scroll-padding:0 max(var(--g),calc((100vw - var(--max))/2 + var(--g)));gap:20px;cursor:grab}
+  .strip figure{width:340px}
+  .strip-nav{display:flex}
+  .ptabs{display:none}
+  .ptable{display:grid;grid-template-columns:repeat(3,1fr);margin-top:64px;border-top:1px solid var(--tinta)}
+  .pcol,.pcol.on{display:flex;flex-direction:column;animation:none;padding:32px 32px 0;border-left:1px solid var(--n200)}
+  .pcol:first-child{border-left:0;padding-left:0}
+  .pcol:last-child{padding-right:0}
+  .pcol ul{flex:1}
+  .conf-g{grid-template-columns:5fr 7fr;gap:96px}
+  .fim{padding-top:160px}
+  .rings{width:640px;right:-120px;top:60px}
+  .foot{grid-template-columns:auto 1fr;align-items:center;padding-bottom:32px}
+  .foot-b{justify-content:flex-end;gap:32px}
+  .mbar{display:none}
 }
-
-/* Títulos de seção */
-.h-sec { font-weight: 700; font-size: 4.8rem; line-height: .9em; letter-spacing: -.055em; }
-.h-team { font-weight: 700; font-size: 4.9rem; line-height: .9em; letter-spacing: -.055em; }
-.eyebrow-s { font-weight: 300; font-size: 1.75rem; line-height: 1.12em; letter-spacing: -.03em; }
-@media (max-width: 991px) { .h-sec { font-size: 5rem; } .h-team { font-size: 6rem; } }
-@media (max-width: 600px) { .h-sec { font-size: 3.4rem; } .h-team { font-size: 3.9rem; } .eyebrow-s { font-size: 1.3rem; } }
-
-/* 5.5 Do cardápio ao Google: pilha de cards */
-.stack .pin { height: 100vh; display: grid; grid-template-columns: 38fr 62fr; gap: 2rem; padding: 0 3rem 0 5rem; align-items: center; overflow: hidden; }
-.stack .col { display: flex; flex-direction: column; gap: 1.5rem; justify-content: center; }
-.stack .col .eyebrow-s { max-width: 24rem; color: var(--pedra); }
-.stage { position: relative; height: 100%; }
-.stack-root { position: absolute; inset: 0; }
-@media (min-width: 992px) { .slide { will-change: transform, opacity; } }
-.slide { position: absolute; aspect-ratio: 1.75; width: min(80vh, 52vw); left: 50%; top: calc(50% - 5vh); translate: -50% -50%; display: block; padding: 1.4cqw; background: var(--frame); border-radius: 1.2rem; container-type: inline-size; overflow: hidden; }
-.slide { padding: 1.75vh; }
-.slide .crop { position: absolute; inset: 1.75vh; overflow: hidden; border-radius: .7rem; background: var(--mesa); }
-.slide .crop img { width: 100%; height: 100%; object-fit: cover; }
-.slide .shade { position: absolute; inset: 1.75vh; border-radius: .7rem; background: linear-gradient(#0000 30%, rgba(20,26,22,.78)); pointer-events: none; }
-.slide .copy { position: absolute; left: 5.5cqw; right: 5.5cqw; bottom: 5.5cqw; display: grid; gap: 1.6cqw; color: var(--porcelana); text-shadow: 0 .05em .4em rgba(0,0,0,.3); }
-.slide .title { font-weight: 700; font-size: 7.4cqw; line-height: .9; letter-spacing: -.05em; }
-.slide .msg { font-family: "Geist"; font-weight: 500; font-size: 2.6cqw; line-height: 1.3; letter-spacing: -.01em; max-width: 30em; opacity: .95; }
-.slide .num { position: absolute; left: 5.5cqw; top: 5.5cqw; font-family: "Geist"; font-weight: 500; font-size: 1.9cqw; letter-spacing: .04em; color: var(--porcelana); opacity: .85; }
-/* Mockups desenhados no próprio card (medidas em cqw, valem em qualquer tela) */
-.ui { position: absolute; font-family: "Geist"; color: var(--tinta); font-size: 1.9cqw; line-height: 1.25; }
-.glass { background: rgba(255,255,255,.95); border-radius: 1.6cqw; box-shadow: 0 1.4cqw 3.6cqw -1.6cqw rgba(20,26,22,.45); }
-.chip { display: inline-flex; align-items: center; gap: .6em; padding: .65em 1em; border-radius: 99em; font-weight: 600; }
-.chip .hd { width: .7em; height: .7em; border-radius: 50%; background: var(--halo); box-shadow: 0 0 0 .3em rgba(169,227,207,.35); }
-.ui-ra { inset: 0; pointer-events: none; }
-.ui-ra .ring { position: absolute; left: 50%; top: 42%; width: 62cqw; translate: -50% -50%; overflow: visible; }
-.ui-ra .ring ellipse { fill: none; stroke: var(--halo); stroke-width: 2.4; }
-.ui-ra .ring .r2 { stroke-width: 1.2; opacity: .6; stroke-dasharray: 4 6; }
-.ui-ra .chip { position: absolute; right: 4.5cqw; top: 4.5cqw; }
-.ui-ra .size { position: absolute; right: 5cqw; top: 5cqw; font-family: "Geist"; font-weight: 500; font-size: 1.7cqw; padding: .5em .8em; border-radius: 99em; background: var(--tinta); color: var(--halo); }
-.panel { right: 4.5cqw; top: 4.5cqw; width: 34cqw; padding: 2.2cqw; display: grid; gap: 1.1cqw; }
-.panel .row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 1.4cqw; font-weight: 500; }
-.panel .row i { width: 4cqw; height: 2.3cqw; border-radius: 99em; background: rgba(20,26,22,.18); position: relative; }
-.panel .row i::after { content: ""; position: absolute; top: .3cqw; left: .3cqw; width: 1.7cqw; height: 1.7cqw; border-radius: 50%; background: #fff; }
-.panel .row i.on { background: var(--louro); } .panel .row i.on::after { left: auto; right: .3cqw; }
-.panel .saved { display: flex; align-items: center; gap: .5em; color: var(--louro); font-weight: 600; font-size: 1.6cqw; }
-.panel .saved i { width: .6em; height: .6em; border-radius: 50%; background: var(--halo); }
-.panel .t-h { display: flex; justify-content: space-between; font-family: "Geist"; font-weight: 500; font-size: 1.5cqw; color: var(--pedra); letter-spacing: .03em; }
-.browser { right: 4.5cqw; top: 4.5cqw; width: 38cqw; overflow: hidden; }
-.browser .bar { display: flex; align-items: center; gap: .5cqw; padding: 1.1cqw 1.4cqw; background: var(--mesa); }
-.browser .bar i { width: .9cqw; height: .9cqw; border-radius: 50%; background: rgba(20,26,22,.22); }
-.browser .bar span { margin-left: 1cqw; flex: 1; background: var(--branco); border-radius: 99em; padding: .25em .8em; font-size: 1.45cqw; color: var(--pedra); }
-.browser .page { padding: 2.2cqw 2.4cqw 2.6cqw; display: grid; gap: 1.2cqw; }
-.browser .brand { font-family: "Sora"; font-weight: 300; font-size: 3.6cqw; letter-spacing: -.05em; line-height: 1; }
-.browser .menu { display: flex; gap: 1.6cqw; font-size: 1.45cqw; color: var(--pedra); }
-.browser .cta-s { justify-self: start; background: var(--tinta); color: var(--porcelana); border-radius: 99em; padding: .55em 1.1em; font-weight: 600; font-size: 1.5cqw; }
-.plaque { right: 4.5cqw; top: 4.5cqw; width: 22cqw; aspect-ratio: 1; border-radius: 3cqw; background: var(--louro); color: var(--porcelana); display: grid; place-items: center; align-content: center; gap: 1.4cqw; padding: 2cqw; text-align: center; box-shadow: 0 2cqw 4cqw -2cqw rgba(0,0,0,.5), inset 0 0 0 .3cqw rgba(255,255,255,.08); }
-.plaque svg { width: 8cqw; height: 8cqw; }
-.plaque .wave { width: 6cqw; height: 4cqw; color: var(--halo); }
-.plaque b { font-family: "Sora"; font-weight: 600; font-size: 2.1cqw; letter-spacing: -.02em; line-height: 1.1; }
-.plaque small { font-size: 1.4cqw; opacity: .75; }
-.review { right: 4.5cqw; top: 4.5cqw; width: 30cqw; padding: 2.2cqw; display: grid; gap: .9cqw; }
-.review .stars { color: var(--latao); letter-spacing: .12em; font-size: 2.6cqw; line-height: 1; }
-.review .score { font-family: "Sora"; font-weight: 600; font-size: 4.4cqw; letter-spacing: -.05em; line-height: 1; }
-.review small { color: var(--pedra); font-size: 1.5cqw; }
-.review .ig { display: flex; align-items: center; gap: .5em; margin-top: .6cqw; padding-top: 1cqw; border-top: 1px solid rgba(20,26,22,.1); font-weight: 600; font-size: 1.6cqw; }
-.review .ig svg { width: 1.3em; height: 1.3em; }
-
-.badge { position: absolute; right: 1rem; bottom: 1rem; width: 9rem; height: 9rem; z-index: 5; }
-.badge svg { width: 100%; height: 100%; overflow: visible; }
-@media (max-width: 991px) {
-  .stack .pin { height: auto; grid-template-columns: 1fr; padding: 6rem 1.5rem 4rem; gap: 2.5rem; overflow: visible; }
-  .stage { height: auto; perspective: none; }
-  .stack-root { position: relative; display: grid; gap: 1.25rem; }
-  .slide { position: relative; width: 100%; left: auto; top: auto; translate: none; padding: .55rem; border-radius: 1rem; }
-  .slide .crop, .slide .shade { inset: .55rem; border-radius: .6rem; }
-  .badge { display: none; }
-}
-@media (max-width: 600px) {
-  .stack .pin { padding: 4.5rem 1rem 3rem; gap: 2rem; }
-  .slide .copy { left: 6cqw; right: 6cqw; bottom: 6cqw; gap: 2.4cqw; }
-  .slide .title { font-size: 9cqw; }
-  .slide .msg { font-size: 4.1cqw; }
-  .slide .num { display: none; }
-  .ui { font-size: 2.7cqw; }
-  .panel, .review { width: 44cqw; } .browser { width: 50cqw; } .plaque { width: 30cqw; }
-  .slide { aspect-ratio: 1; }
-  .ui-ra .ring { top: 40%; }
-  .ui-ra .ring { width: 80cqw; }
-}
-
-/* 5.6 Na sua mesa: título fixo, tema escuro, pratos subindo */
-.flock { position: relative; height: 210vh; overflow-x: clip; transition: color .7s var(--ease); }
-html[data-theme="dark"] { --page: var(--tinta); }
-html[data-theme="dark"] .flock { color: var(--porcelana); }
-html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color: rgba(244,245,242,.08); }
-.logo { transition: color .7s var(--ease); }
-.flock .sticky { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; place-items: center; z-index: 1; }
-.flock-title { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1.1rem; text-align: center; }
-.flock-title .para { max-width: 23rem; color: var(--salvia); }
-.stamp { position: absolute; width: 10rem; left: -3rem; top: -8rem; rotate: -10deg; z-index: 3; }
-.stamp svg { width: 100%; overflow: visible; }
-.photos { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-.ph { position: absolute; width: var(--w); top: var(--top); rotate: var(--r); pointer-events: auto; will-change: transform; }
-.ph.l { left: var(--o); } .ph.r { right: var(--o); }
-.ph .pic { aspect-ratio: 4 / 5; overflow: hidden; border-radius: .5rem; background: #2A332D; box-shadow: 0 .8rem 1.4rem -1rem rgba(0,0,0,.55); }
-.ph .pic img { width: 100%; height: 100%; object-fit: cover; }
-.ph .mv { position: relative; }
-.ph .name { position: absolute; left: .6rem; bottom: .6rem; white-space: nowrap; font-family: "Geist"; font-weight: 600; font-size: .8rem; line-height: 1.2; letter-spacing: 0; background: var(--porcelana); color: var(--tinta); padding: .35em .75em; border-radius: 99em; }
-.ph .tag { position: absolute; left: .6rem; bottom: .6rem; display: inline-flex; align-items: center; gap: .45em; background: var(--porcelana); color: var(--tinta); font-family: "Geist"; font-weight: 600; font-size: .72rem; white-space: nowrap; padding: .35em .7em; border-radius: 99em; }
-.ph .tag i { width: .55em; height: .55em; border-radius: 50%; background: var(--halo); box-shadow: 0 0 0 .25em rgba(169,227,207,.4); }
-@media (max-width: 991px) { .flock { height: 200vh; } }
-@media (max-width: 600px) {
-  .flock-title { padding: 0 1.5rem; }
-  /* Celular: pratos ao fundo e título/frases na frente, sempre legíveis */
-  .photos { z-index: 0; }
-  .ph { opacity: .5; }
-  .flock-title .eyebrow-m, .flock-title .h-team, .flock-title .para { text-shadow: 0 0 .6rem rgba(20,26,22,.85), 0 0 1.4rem rgba(20,26,22,.6); }
-  .flock-title .para { color: var(--porcelana); }
-  .stamp { width: 6rem; left: 0; top: -5rem; }
-  .ph { width: 7rem; top: var(--mtop); }
-  .ph.l { left: var(--mo); } .ph.r { right: var(--mo); }
-  .ph .name { font-size: max(11px, .68rem); left: .4rem; bottom: .4rem; }
-  .ph .tag { font-size: max(11px, .68rem); left: .4rem; bottom: .4rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .flock { height: auto; }
-  .flock .sticky { position: relative; height: auto; padding: 8rem 1.5rem 4rem; }
-  .photos { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 2rem; padding: 2rem; }
-  .ph { position: relative; width: auto; top: auto; left: auto; right: auto; }
-}
-/* Demonstração em RA */
-.demo { padding: 8rem 5rem 8rem; }
-.demo-in { display: grid; grid-template-columns: 40fr 60fr; grid-template-areas: "head viewer" "side viewer"; gap: 2.5rem 4rem; align-items: start; max-width: 90rem; margin: 0 auto; }
-.demo-head { grid-area: head; display: flex; flex-direction: column; gap: 1.5rem; }
-.demo-head .eyebrow-s { color: var(--pedra); }
-.viewer { grid-area: viewer; position: relative; aspect-ratio: 5 / 4; border-radius: 1.75rem; background: radial-gradient(80% 70% at 50% 40%, #EEF1EC, var(--mesa)); overflow: hidden; }
-.viewer model-viewer { width: 100%; height: 100%; --poster-color: transparent; position: relative; z-index: 1; }
-.viewer .ring { position: absolute; left: 50%; bottom: 16%; width: 60%; aspect-ratio: 3 / 1; translate: -50% 0; border-radius: 50%; border: 2px solid var(--halo); box-shadow: 0 0 0 .6rem rgba(169,227,207,.18); }
-.v-hint { position: absolute; left: 1.25rem; top: 1.25rem; z-index: 2; font-family: "Geist"; font-size: .95rem; pointer-events: none; }
-.v-load { position: absolute; left: 50%; bottom: 1.4rem; translate: -50% 0; width: 8rem; height: 3px; border-radius: 3px; background: rgba(20,26,22,.1); overflow: hidden; z-index: 2; transition: opacity .4s; }
-.v-load span { display: block; height: 100%; width: var(--p, 0%); background: var(--louro); transition: width .3s; }
-.v-load[data-done] { opacity: 0; }
-.demo-side { grid-area: side; display: grid; gap: 1.75rem; }
-.dish-now { display: grid; gap: .35rem; font-family: "Geist"; }
-.dish-now h3 { font-family: "Sora"; font-weight: 600; font-size: 1.9rem; letter-spacing: -.035em; }
-.dish-now p { color: var(--pedra); font-size: 1.05rem; }
-.dish-now .data { color: var(--tinta); font-weight: 500; font-variant-numeric: tabular-nums; }
-.dishes { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
-.dishes button { display: grid; justify-items: center; gap: .35rem; padding: .7rem .4rem .8rem; border: 0; border-radius: 1rem; background: var(--branco); cursor: pointer; font-family: "Geist"; font-weight: 500; font-size: .95rem; color: var(--tinta); box-shadow: inset 0 0 0 1px rgba(20,26,22,.08); transition: box-shadow .25s var(--ease), transform .25s var(--ease); min-height: 44px; }
-.dishes button img { width: 3.6rem; height: 3.6rem; object-fit: contain; }
-.dishes button:hover { transform: translateY(-2px); }
-.dishes [aria-checked="true"] { box-shadow: inset 0 0 0 2px var(--louro); }
-.btn-p.wide { width: 100%; justify-content: center; border: 0; cursor: pointer; }
-.btn-p[disabled] { opacity: .55; cursor: default; transform: none; }
-.qr { display: grid; grid-template-columns: 8rem 1fr; gap: 1.25rem; align-items: center; font-family: "Geist"; font-size: 1rem; line-height: 1.4; color: var(--pedra); }
-.qr b { color: var(--tinta); font-weight: 600; display: block; }
-.qr-code { width: 8rem; height: 8rem; padding: .5rem; border-radius: .9rem; background: #fff; box-shadow: inset 0 0 0 1px rgba(20,26,22,.08); }
-.qr-code svg { width: 100%; height: 100%; display: block; }
-.demo .note { font-family: "Geist"; font-size: .95rem; line-height: 1.45; color: var(--pedra); }
-@media (max-width: 991px) {
-  .demo { padding: 6rem 1.5rem; }
-  .demo-in { grid-template-columns: 1fr; grid-template-areas: "head" "viewer" "side"; gap: 2rem; }
-}
-@media (max-width: 600px) {
-  /* Celular: demonstração menor e mais limpa */
-  .demo { padding: 3.25rem 1.25rem 3.5rem; }
-  .demo-in { gap: 1.25rem; }
-  .demo-head { gap: .75rem; }
-  .demo-head .eyebrow-s { font-size: 1rem; }
-  .demo .h-sec { font-size: 2.5rem; line-height: .95em; }
-  .viewer { aspect-ratio: 1 / 1; border-radius: 1rem; background: var(--mesa); }
-  .viewer .ring, .v-hint { display: none; }
-  .demo-side { gap: 1rem; }
-  .dish-now { gap: .2rem; }
-  .dish-now h3 { font-size: 1.25rem; }
-  .dish-now p { font-size: 14px; }
-  .dishes { gap: .4rem; }
-  .dishes button { font-size: 12px; gap: .2rem; padding: .4rem .2rem .5rem; border-radius: .7rem; min-height: 40px; }
-  .dishes button img { width: 2.2rem; height: 2.2rem; }
-  .demo .btn-p.wide { height: 46px; font-size: 15px; }
-  .demo .note { font-size: 12.5px; line-height: 1.4; }
-}
-
-/* Contato */
-.contato { background: var(--louro); color: var(--porcelana); padding: 8rem 5rem 2rem; }
-.c-in { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 90rem; margin: 0 auto; align-items: start; }
-.c-copy { display: flex; flex-direction: column; gap: 1.5rem; }
-.c-copy .eyebrow-s { color: var(--salvia); }
-.c-para { font-family: "Geist"; font-size: 1.25rem; line-height: 1.45; color: rgba(244,245,242,.82); max-width: 28rem; }
-.c-points { list-style: none; display: grid; gap: .8rem; font-family: "Geist"; font-weight: 500; font-size: 1.1rem; margin-top: .5rem; }
-.c-points li { display: flex; align-items: center; gap: .8rem; }
-.c-form { display: grid; gap: 1rem; padding: 2rem; border-radius: 1.5rem; background: rgba(244,245,242,.06); box-shadow: inset 0 0 0 1px rgba(244,245,242,.12); }
-.c-form > label { display: grid; gap: .45rem; font-family: "Geist"; font-weight: 500; font-size: .95rem; color: rgba(244,245,242,.8); }
-.c-form input:not([type="checkbox"]) { height: 52px; padding: 0 1rem; border-radius: .8rem; border: 0; background: var(--porcelana); color: var(--tinta); font: 500 16px "Geist", sans-serif; outline: none; box-shadow: inset 0 0 0 2px transparent; transition: box-shadow .2s; }
-.c-form input:focus { box-shadow: inset 0 0 0 2px var(--halo); }
-.c-form fieldset { border: 0; display: grid; gap: .6rem; }
-.c-form legend { font-family: "Geist"; font-weight: 500; font-size: .95rem; color: rgba(244,245,242,.8); margin-bottom: .6rem; }
-.pick { display: flex; flex-wrap: wrap; gap: .5rem; }
-.pick label { position: relative; cursor: pointer; }
-.pick input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-.pick span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1rem; border-radius: 99rem; font-family: "Geist"; font-weight: 500; font-size: 15px; box-shadow: inset 0 0 0 1px rgba(244,245,242,.35); transition: background-color .2s, color .2s; }
-.pick input:checked + span { background: var(--halo); color: var(--tinta); box-shadow: none; }
-.pick input:focus-visible + span { outline: 2px solid var(--latao); outline-offset: 2px; }
-.btn-p.light { background: var(--porcelana); color: var(--louro); margin-top: .5rem; height: 56px; }
-.btn-p.light:hover { background: #fff; }
-.btn-p svg { width: 1.3rem; height: 1.3rem; }
-.c-err { font-family: "Geist"; font-size: .95rem; color: var(--halo); }
-.foot { max-width: 90rem; margin: 6rem auto 0; padding-top: 1.75rem; border-top: 1px solid rgba(244,245,242,.14); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-family: "Geist"; font-size: .95rem; color: rgba(244,245,242,.7); }
-.foot .logo.small { color: var(--porcelana); font-size: 1.6rem; }
-.foot .logo.small svg { width: 1.7rem; height: 1.7rem; }
-@media (max-width: 991px) {
-  .contato { padding: 6rem 1.5rem 2rem; }
-  .c-in { grid-template-columns: 1fr; gap: 2.5rem; }
-}
-@media (max-width: 600px) {
-  .contato { padding: 4.5rem 1rem calc(6rem + env(safe-area-inset-bottom)); }
-  .c-para { font-size: 16px; }
-  .c-points { font-size: 15px; }
-  .c-form { padding: 1.25rem; border-radius: 1.25rem; }
-  .c-form > label, .c-form legend { font-size: 14px; }
-  .foot { flex-direction: column; align-items: flex-start; gap: .6rem; margin-top: 4rem; font-size: 14px; }
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  [data-r],.words .w>span{opacity:1;transform:none}
 }
 </style>
 </head>
-<body>
-<div class="wipe" aria-hidden="true"><svg viewBox="0 0 1000 1000" preserveAspectRatio="none"><path d="M43 259C296 11.5688 994 -3 922.994 498.259C851.988 999.517 281.229 1004.28 123 767C-35.2287 529.721 179 259 472 259C765 259 792 498.259 659 654C526 809.741 319 755 285 669.001C251 583.001 299 452 496 452C693 452 876.073 639.171 935 937.001"/></svg></div>
+<body class="no-js">
+<script>document.body.classList.remove('no-js')</script>
 
-<header class="nav">
-  <a class="logo" href="#topo" aria-label="previa, início">
-    <svg viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z"/><circle cx="32" cy="42" r="7" fill="var(--latao)"/></svg>
-    <span class="word">prev<span class="i">ı</span>a</span>
-  </a>
-  <nav class="pill" aria-label="Seções">
-    <a class="navlink" href="#entrega" data-draw-line>Cardápio em RA<span class="draw-box"></span></a>
-    <a class="navlink" href="#entrega" data-draw-line>Plaquinhas<span class="draw-box"></span></a>
-    <a class="navlink" href="#entrega" data-draw-line>Sites<span class="draw-box"></span></a>
-  </nav>
-  <a class="contact" href="#contato"><span class="dot"></span>Contato</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 64 64"><path fill="currentColor" fill-rule="evenodd" d="M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z"/><circle cx="32" cy="42" r="7" fill="#A07C45"/></symbol>
+  <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.2a9.8 9.8 0 0 0-8.4 14.9L2.3 21.7l4.7-1.2A9.8 9.8 0 1 0 12 2.2Zm0 17.9c-1.5 0-2.9-.4-4.2-1.1l-.3-.2-2.8.7.8-2.7-.2-.3A8.1 8.1 0 1 1 12 20.1Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></symbol>
+  <symbol id="ar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="16" rx="9" ry="3"/><ellipse cx="12" cy="16" rx="4.5" ry="1.5"/><path d="M12 3v9"/><path d="M8.8 6.2 12 3l3.2 3.2"/></g></symbol>
+  <symbol id="nfc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 8.5a5 5 0 0 1 0 7"/><path d="M10.5 6a8.5 8.5 0 0 1 0 12"/><path d="M14 3.5a12 12 0 0 1 0 17"/></g><circle cx="4" cy="12" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></g></symbol>
+  <symbol id="eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></g></symbol>
+  <symbol id="arr" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="star" viewBox="0 0 24 24"><path d="m12 2.8 2.8 6 6.5.7-4.9 4.4 1.4 6.4L12 17l-5.8 3.3 1.4-6.4-4.9-4.4 6.5-.7L12 2.8Z"/></symbol>
+</svg>
+
+<header class="nav" data-nav>
+  <div class="wrap">
+    <a class="wm" href="#top" aria-label="Previa"><svg><use href="#logo"/></svg><span>prev<span class="i">ı</span>a</span></a>
+    <nav class="nav-links" aria-label="Seções" data-en-label="Sections">
+      <a href="#demo" data-en="Demo">Demonstração</a>
+      <a href="#placa" data-en="Table plate">A placa</a>
+      <a href="#painel" data-en="Owner panel">Painel</a>
+      <a href="#planos" data-en="Plans">Planos</a>
+    </nav>
+    <div class="nav-r">
+      <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-lang="pt" aria-pressed="true">PT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+      <a class="btn btn-p" data-wa="geral" href="#fim" aria-label="WhatsApp"><svg><use href="#wa"/></svg><span>WhatsApp</span></a>
+    </div>
+  </div>
 </header>
 
-<main>
-  <section class="hero" id="topo">
-    <video muted loop playsinline autoplay preload="none" aria-hidden="true" disablepictureinpicture disableremoteplayback
-      data-video-src="img/hero-mesa.mp4" data-video-src-m="img/hero-mesa-m.mp4" data-poster="img/hero-mesa.webp" data-poster-m="img/hero-mesa-m.webp"></video>
-    <div class="veil" aria-hidden="true"></div><div class="fade" aria-hidden="true"></div>
-
-
-    <div class="hero-content">
-      <p class="kicker"><span class="hd" aria-hidden="true"></span>Cardápio em realidade aumentada</p>
-      <h1 class="h-hero" data-text-reveal="chars">Veja antes<br />de <span class="alt">pedir.</span></h1>
-      <p class="lede" data-text-reveal="lines">Seus pratos em 3D, no tamanho real, em cima da mesa do cliente. Cardápio, site e plaquinhas numa solução só.</p>
-      <div class="actions">
-        <a class="btn-p" href="#demo"><span class="hd" aria-hidden="true"></span>Ver o cardápio em RA</a>
-        <a class="cta" href="#entrega"><span class="txt">Como funciona<span class="draw-box"></span></span>
-        <span class="arrow" aria-hidden="true"><span class="twin">
-          <svg viewBox="0 0 14 13"><path fill="currentColor" d="M12.94 5.7 9.95 8 6.9 10.37l.84 1.86V0h-2.55v12.23l.85-1.86L3 8 0 5.7V9.05l6.47 4.95 6.47-4.95z"/></svg>
-          <svg viewBox="0 0 14 13"><path fill="currentColor" d="M12.94 5.7 9.95 8 6.9 10.37l.84 1.86V0h-2.55v12.23l.85-1.86L3 8 0 5.7V9.05l6.47 4.95 6.47-4.95z"/></svg>
-        </span></span>
-        </a>
-      </div>
-    </div>
-
-    <!-- Faixa: ícones da Previa (grade 24, traço 1,6, terminais retos, elipse 3:1), no lugar de logos de clientes -->
-    <div class="marquee" data-marquee data-direction="left" data-speed="30" data-scroll-speed="10" aria-label="O que a Previa faz">
-      <div class="scroll"><div class="coll">
-        <div class="mk"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18"/><line x1="8" y1="8" x2="13" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="14" y2="16"/></svg><span>Cardápio digital</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="9" ry="3"/><path d="M5 16a7 7 0 0 1 14 0"/><circle class="acc" cx="12" cy="7" r="1.3"/></svg><span>Pratos em 3D</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="18" rx="9" ry="3"/><line x1="12" y1="3" x2="12" y2="13"/><path d="M8 9l4 4 4-4"/></svg><span>Ver na mesa</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="14" r="5.5"/><circle class="acc" cx="12" cy="16" r="2.2"/></svg><span>Tamanho real</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><path d="M4 14c0 2 3.6 4 8 4s8-2 8-4"/><path d="M6 11.5C4.8 12.2 4 13 4 14"/><path d="M18 11.5c1.2.7 2 1.5 2 2.5"/><rect x="9" y="5" width="6" height="6"/><path d="M15 20l-3-2 3-2"/></svg><span>Gire 360°</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5"/><line x1="12" y1="12" x2="12" y2="21"/></svg><span>Sem baixar app</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg><span>Painel do dono</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16"/><line x1="3" y1="8.5" x2="21" y2="8.5"/><line x1="6" y1="6.2" x2="7.5" y2="6.2"/><line x1="9" y1="6.2" x2="10.5" y2="6.2"/></svg><span>Site da casa</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><path d="M7 8a6 6 0 0 1 0 8"/><path d="M10.5 5.5a10 10 0 0 1 0 13"/><path d="M14 3a14 14 0 0 1 0 18"/></svg><span>Plaquinha NFC</span></div>
-        <div class="mk"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg><span>Em 3 idiomas</span></div>
-      </div></div>
-    </div>
-  </section>
-
-  <section class="stack" id="entrega" data-featured-stack="0.85">
-    <div class="pin">
-      <div class="col" data-scroll-reveal-group>
-        <p class="eyebrow-s" data-scroll-reveal="lines">Cardápio, site e plaquinha com a sua marca, tudo no mesmo lugar.</p>
-        <h2 class="h-sec" data-scroll-reveal="chars">Do cardápio <span class="alt">ao Google.</span></h2>
-      </div>
-      <div class="stage">
-        <div class="stack-root">
-        <a class="slide" href="#demo" style="--frame: var(--louro)" data-scroll-reveal="element">
-          <div class="crop"><img src="img/c-ra.webp" alt="Pizza margherita vista de cima, com o anel de realidade aumentada" loading="lazy" decoding="async" width="928" height="530" /></div>
-          <div class="shade" aria-hidden="true"></div>
-          <div class="ui ui-ra" aria-hidden="true"><svg class="ring" viewBox="0 0 200 80"><ellipse cx="100" cy="40" rx="96" ry="34"/><ellipse class="r2" cx="100" cy="40" rx="84" ry="27"/></svg><span class="chip glass"><span class="hd"></span>Ver na sua mesa</span></div>
-          <span class="num" aria-hidden="true">01 / 05</span>
-          <div class="copy"><h3 class="title">Cardápio em RA</h3><p class="msg">O cliente vê o prato em 3D, no tamanho real, em cima da mesa. Antes de pedir.</p></div>
-        </a>
-        <a class="slide" href="#contato" style="--frame: var(--salvia)" data-scroll-reveal="element">
-          <div class="crop"><img src="img/c-pedido.webp" alt="Hambúrguer smash duplo numa tábua" loading="lazy" decoding="async" width="928" height="530" /></div>
-          <div class="shade" aria-hidden="true"></div>
-          <div class="ui panel glass" aria-hidden="true"><div class="t-h"><span>CARDÁPIO</span><span>3 pratos</span></div><div class="row"><span>Smash duplo</span><span>R$ 42</span><i class="on"></i></div><div class="row"><span>Pizza margherita</span><span>R$ 68</span><i class="on"></i></div><div class="row"><span>Petit gâteau</span><span>R$ 32</span><i></i></div><div class="saved"><i></i>Salvo agora</div></div>
-          <span class="num" aria-hidden="true">02 / 05</span>
-          <div class="copy"><h3 class="title">Painel do restaurante</h3><p class="msg">Troque preço, foto e prato em minutos, sem depender de ninguém.</p></div>
-        </a>
-        <a class="slide" href="#contato" style="--frame: var(--tinta)" data-scroll-reveal="element">
-          <div class="crop"><img src="img/c-site.webp" alt="Risoto de cogumelos visto de cima" loading="lazy" decoding="async" width="928" height="530" /></div>
-          <div class="shade" aria-hidden="true"></div>
-          <div class="ui browser glass" aria-hidden="true"><div class="bar"><i></i><i></i><i></i><span>seurestaurante.com.br</span></div><div class="page"><div class="brand">Seu restaurante</div><div class="menu"><span>Cardápio</span><span>Reservas</span><span>Endereço</span></div><div class="cta-s">Ver cardápio</div></div></div>
-          <span class="num" aria-hidden="true">03 / 05</span>
-          <div class="copy"><h3 class="title">Site da casa</h3><p class="msg">Um site com a cara do seu restaurante, pronto para aparecer no Google.</p></div>
-        </a>
-        <a class="slide" href="#contato" style="--frame: var(--pedra)" data-scroll-reveal="element">
-          <div class="crop"><img src="img/c-nfc.webp" alt="Poke de salmão numa tigela branca" loading="lazy" decoding="async" width="928" height="530" /></div>
-          <div class="shade" aria-hidden="true"></div>
-          <div class="ui plaque" aria-hidden="true"><svg viewBox="0 0 64 64"><path fill="currentColor" fill-rule="evenodd" d="M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z"/><circle cx="32" cy="42" r="7" fill="var(--latao)"/></svg><svg class="wave" viewBox="0 0 24 16"><path d="M8 3a7 7 0 0 1 0 10M12 1a10 10 0 0 1 0 14M16 0a13 13 0 0 1 0 16" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><b>Aproxime o celular</b></div>
-          <span class="num" aria-hidden="true">04 / 05</span>
-          <div class="copy"><h3 class="title">Plaquinha NFC</h3><p class="msg">Um toque do celular abre o cardápio, o Instagram e a avaliação.</p></div>
-        </a>
-        <a class="slide" href="#contato" style="--frame: var(--louro)" data-scroll-reveal="element">
-          <div class="crop"><img src="img/c-redes.webp" alt="Tiramisù num copo de vidro" loading="lazy" decoding="async" width="928" height="530" /></div>
-          <div class="shade" aria-hidden="true"></div>
-          <div class="ui review glass" aria-hidden="true"><div class="stars">★★★★★</div><div class="score">4,9</div><small>avaliações no Google</small><span class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>@seurestaurante</span></div>
-          <span class="num" aria-hidden="true">05 / 05</span>
-          <div class="copy"><h3 class="title">Instagram e Google</h3><p class="msg">Mais avaliações e mais seguidores, direto da mesa.</p></div>
-        </a>
+<main id="top">
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <video muted loop playsinline preload="none" data-hero
+      data-poster="img/hero-mesa.webp" data-poster-m="img/hero-mesa-m.webp"
+      data-src="img/hero-mesa.mp4" data-src-m="img/hero-mesa-m.mp4"></video>
+  </div>
+  <div class="hero-c wrap">
+    <div class="hero-g">
+      <div>
+        <h1 class="h1 words" data-words data-en="See it before you order.">Veja antes de pedir.</h1>
+        <p class="lead" data-r data-en="An augmented reality menu for restaurants. Guests tap their phone on the table plate and see the dish in 3D, at real size, before they order.">Cardápio com realidade aumentada para restaurantes. Seu cliente aproxima o celular da placa na mesa e vê o prato em 3D, no tamanho real, antes de pedir.</p>
+        <div class="hero-cta" data-r>
+          <a class="btn btn-p" href="#demo"><svg><use href="#ar"/></svg><span data-en="See a dish on the table">Ver um prato na mesa</span></a>
+          <a class="btn btn-g" data-wa="geral" href="#fim"><svg><use href="#wa"/></svg><span data-en="Chat on WhatsApp">Falar no WhatsApp</span></a>
         </div>
-        <div class="badge" aria-hidden="true"><svg viewBox="0 0 200 200"><defs><path id="bp" d="M100 30a70 70 0 1 1 0 140a70 70 0 1 1 0-140"/></defs><circle cx="100" cy="100" r="98" fill="var(--louro)"/><text font-family="Sora" font-weight="700" font-size="22" fill="var(--porcelana)" letter-spacing="1"><textPath href="#bp" textLength="436" lengthAdjust="spacing">VEJA · ANTES · DE · PEDIR ·</textPath></text><g transform="translate(73 73) scale(.85)" color="var(--porcelana)"><path fill="currentColor" fill-rule="evenodd" d="M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z"/><circle cx="32" cy="42" r="7" fill="var(--latao)"/></g></svg></div>
       </div>
-    </div>
-  </section>
-
-  <section class="flock" id="mesa" data-page-theme="dark">
-    <div class="sticky">
-      <div class="flock-title" data-scroll-reveal-group>
-                <p class="eyebrow-m" data-scroll-reveal="lines">O prato chega antes do garçom</p>
-        <h2 class="h-team" data-scroll-reveal="chars"><span class="alt">Na</span> sua <span class="alt">mesa.</span></h2>
-        <p class="para" data-scroll-reveal="lines">Cada prato vira um modelo 3D. O cliente aponta o celular, vê o tamanho real em cima da mesa e pede com vontade.</p>
-      </div>
-    </div>
-    <div class="photos">
-      <figure class="ph l" style="--o: 3vw; --top: 3%; --mtop: 1%; --w: 9rem; --r: 0deg; --mo: -1.25rem;" data-speed="1"><div class="mv" data-momentum><div class="pic"><img src="img/d-margherita.webp" alt="Margherita" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Margherita</span></div></figure>
-      <figure class="ph l" style="--o: 13.5vw; --top: 18%; --mtop: 17%; --w: 8rem; --r: 0deg; --mo: 3rem;" data-speed="0.6"><div class="mv" data-momentum><div class="pic"><img src="img/det-pizza.webp" alt="Em RA · mesa 4" loading="lazy" decoding="async" width="560" height="695" /></div><span class="tag"><i></i>Em RA · mesa 4</span></div></figure>
-      <figure class="ph l" style="--o: 3vw; --top: 33%; --mtop: 33%; --w: 9rem; --r: 0deg; --mo: -1.25rem;" data-speed="1.3"><div class="mv" data-momentum><div class="pic"><img src="img/d-smash.webp" alt="Smash" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Smash</span></div></figure>
-      <figure class="ph l" style="--o: 13.5vw; --top: 48%; --mtop: 49%; --w: 9rem; --r: 0deg; --mo: 3rem;" data-speed="0.8"><div class="mv" data-momentum><div class="pic"><img src="img/d-risoto.webp" alt="Risoto" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Risoto</span></div></figure>
-      <figure class="ph l" style="--o: 3vw; --top: 63%; --mtop: 65%; --w: 8rem; --r: 0deg; --mo: -1.25rem;" data-speed="1.15"><div class="mv" data-momentum><div class="pic"><img src="img/det-smash.webp" alt="Preço atualizado" loading="lazy" decoding="async" width="560" height="695" /></div><span class="tag"><i></i>Preço atualizado</span></div></figure>
-      <figure class="ph l" style="--o: 13.5vw; --top: 78%; --mtop: 81%; --w: 9rem; --r: 0deg; --mo: 3rem;" data-speed="0.7"><div class="mv" data-momentum><div class="pic"><img src="img/d-pomodoro.webp" alt="Pomodoro" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Pomodoro</span></div></figure>
-      <figure class="ph r" style="--o: 3vw; --top: 8%; --mtop: 9%; --w: 9rem; --r: 0deg; --mo: -1.25rem;" data-speed="0.75"><div class="mv" data-momentum><div class="pic"><img src="img/d-poke.webp" alt="Poke" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Poke</span></div></figure>
-      <figure class="ph r" style="--o: 13.5vw; --top: 23%; --mtop: 25%; --w: 8rem; --r: 0deg; --mo: 3rem;" data-speed="1.25"><div class="mv" data-momentum><div class="pic"><img src="img/det-poke.webp" alt="Via NFC" loading="lazy" decoding="async" width="560" height="695" /></div><span class="tag"><i></i>Via NFC</span></div></figure>
-      <figure class="ph r" style="--o: 3vw; --top: 38%; --mtop: 41%; --w: 9rem; --r: 0deg; --mo: -1.25rem;" data-speed="0.9"><div class="mv" data-momentum><div class="pic"><img src="img/d-alfredo.webp" alt="Alfredo" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Alfredo</span></div></figure>
-      <figure class="ph r" style="--o: 13.5vw; --top: 53%; --mtop: 57%; --w: 9rem; --r: 0deg; --mo: 3rem;" data-speed="1.4"><div class="mv" data-momentum><div class="pic"><img src="img/d-tiramisu.webp" alt="Tiramisù" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Tiramisù</span></div></figure>
-      <figure class="ph r" style="--o: 3vw; --top: 68%; --mtop: 73%; --w: 8rem; --r: 0deg; --mo: -1.25rem;" data-speed="0.65"><div class="mv" data-momentum><div class="pic"><img src="img/det-petit.webp" alt="Avaliar no Google" loading="lazy" decoding="async" width="560" height="695" /></div><span class="tag"><i></i>Avaliar no Google</span></div></figure>
-      <figure class="ph r" style="--o: 13.5vw; --top: 83%; --mtop: 89%; --w: 9rem; --r: 0deg; --mo: 3rem;" data-speed="1.05"><div class="mv" data-momentum><div class="pic"><img src="img/d-petit.webp" alt="Petit gâteau" loading="lazy" decoding="async" width="560" height="695" /></div><span class="name">Petit gâteau</span></div></figure>
-    </div>
-  </section>
-
-  <section class="demo" id="demo">
-    <div class="demo-in">
-      <div class="demo-head" data-scroll-reveal-group>
-        <p class="eyebrow-s" data-scroll-reveal="lines">Experimente agora, com o seu celular.</p>
-        <h2 class="h-sec" data-scroll-reveal="chars">Ponha um prato <span class="alt">na sua mesa.</span></h2>
-      </div>
-
-      <div class="viewer" data-viewer>
-        <model-viewer data-mv alt="Pizza margherita em 3D" poster="img/poster-pizza-margherita.webp"
-          camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="800" rotation-per-second="18deg"
-          camera-orbit="-20deg 64deg auto" min-camera-orbit="auto 20deg auto" max-camera-orbit="auto 82deg auto"
-          interaction-prompt="none" shadow-intensity="1" shadow-softness=".85" exposure="1.05" environment-image="neutral"
-          ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor">
-          <button slot="ar-button" hidden></button>
-        </model-viewer>
-        <div class="ring" aria-hidden="true"></div>
-        <span class="v-hint chip glass" aria-hidden="true"><span class="hd"></span>Gire com o dedo</span>
-        <div class="v-load" data-load aria-hidden="true"><span></span></div>
-      </div>
-
-      <div class="demo-side">
-        <div class="dish-now">
-          <h3 data-f="name">Pizza margherita</h3>
-          <p data-f="detail">Molho de tomate, muçarela de búfala, manjericão</p>
-          <p class="data" data-f="data">29 cm · serve 2 · R$ 68</p>
+      <div class="hero-dish" aria-hidden="true">
+        <div class="dish-land" data-land>
+          <span class="halo"></span>
+          <img src="img/poster-risoto-funghi.webp" alt="" data-k="risoto-funghi" class="on" fetchpriority="high" />
+          <img src="img/poster-pizza-margherita.webp" alt="" data-k="pizza-margherita" />
+          <img src="img/poster-petit-gateau.webp" alt="" data-k="petit-gateau" />
+          <img src="img/poster-spaghetti-pomodoro.webp" alt="" data-k="spaghetti-pomodoro" />
+          <div class="dish-tag"><i></i><span data-land-name>Risoto de cogumelos</span><span class="mono" data-land-size>28 cm</span></div>
         </div>
-        <div class="dishes" role="radiogroup" aria-label="Pratos da demonstração">
-          <button type="button" role="radio" aria-checked="true" data-dish="pizza-margherita"><img src="img/poster-pizza-margherita.webp" alt="" width="64" height="64" loading="lazy" /><span>Margherita</span></button>
-          <button type="button" role="radio" aria-checked="false" data-dish="risoto-funghi"><img src="img/poster-risoto-funghi.webp" alt="" width="64" height="64" loading="lazy" /><span>Risoto</span></button>
-          <button type="button" role="radio" aria-checked="false" data-dish="spaghetti-pomodoro"><img src="img/poster-spaghetti-pomodoro.webp" alt="" width="64" height="64" loading="lazy" /><span>Pomodoro</span></button>
-        </div>
-        <div class="open">
-          <button type="button" class="btn-p wide" data-ar><span class="hd" aria-hidden="true"></span><span data-ar-label>Ver na minha mesa</span></button>
-          <div class="qr" data-qr hidden>
-            <div class="qr-code" data-qr-code role="img" aria-label="QR code para abrir a demonstração no celular"></div>
-            <p><b>Está no computador?</b> Aponte a câmera do celular para o código. O prato abre na sua mesa, em tamanho real.</p>
-          </div>
-        </div>
-        <p class="note">Esta é uma demonstração. No seu cardápio entram os seus pratos, com a sua marca e os seus preços. O cliente não precisa baixar nada.</p>
       </div>
     </div>
-  </section>
+    <div class="hero-foot">
+      <span data-en="No app. iPhone and Android.">Sem app. iPhone e Android.</span>
+      <span class="scroll" data-en="Scroll">Role</span>
+    </div>
+  </div>
+</section>
 
-  <section class="contato" id="contato">
-    <div class="c-in">
-      <div class="c-copy" data-scroll-reveal-group>
-        <p class="eyebrow-s" data-scroll-reveal="lines">Vamos conversar?</p>
-        <h2 class="h-sec" data-scroll-reveal="chars">Seu cardápio <span class="alt">na mesa do cliente.</span></h2>
-        <p class="c-para" data-scroll-reveal="lines">Conte um pouco do seu restaurante. A gente responde pelo WhatsApp com uma demonstração feita com os seus pratos.</p>
-        <ul class="c-points">
-          <li><span class="hd" aria-hidden="true"></span>Seus pratos em 3D, no tamanho real</li>
-          <li><span class="hd" aria-hidden="true"></span>Sem app para o cliente baixar</li>
-          <li><span class="hd" aria-hidden="true"></span>Site e plaquinhas NFC com a sua marca</li>
+<!-- ============ PROVA ============ -->
+<section class="proof" aria-labelledby="proof-t">
+  <div class="wrap">
+    <div class="proof-g">
+      <p class="big" data-r aria-hidden="true"><span class="from">18</span><span class="arrow">→</span><span data-count>41</span><small>%</small></p>
+      <div data-r>
+        <h2 class="h3" id="proof-t" data-en="When guests see the dessert on the table, they order it.">Quando o cliente vê a sobremesa na mesa, ele pede.</h2>
+        <p class="lead" style="margin-top:14px;font-size:16.5px" data-en="In a study published in the Journal of the Academy of Marketing Science, dessert orders went from 18% to 41% when guests could see the dish in augmented reality.">Em um estudo publicado no Journal of the Academy of Marketing Science, os pedidos de sobremesa foram de 18% para 41% quando os clientes puderam ver o prato em realidade aumentada.</p>
+      </div>
+    </div>
+    <div class="facts">
+      <div data-r><b data-en="Real size">Tamanho real</b><span data-en="The dish appears on the table at its true size. No surprises when it arrives.">O prato aparece na mesa com o tamanho de verdade. Nada de surpresa quando chega.</span></div>
+      <div data-r><b data-en="No app">Sem app</b><span data-en="It opens in the phone’s browser, from the table plate or the QR code.">Abre no navegador do celular, pela placa da mesa ou pelo QR code.</span></div>
+      <div data-r><b data-en="Your brand">Sua marca</b><span data-en="The menu wears your restaurant’s identity. Previa stays in the background.">O cardápio usa a identidade do seu restaurante. A Previa fica nos bastidores.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEMO ============ -->
+<section class="demo" id="demo" aria-labelledby="demo-t">
+  <div class="wrap">
+    <div class="demo-head">
+      <h2 class="h2 words" id="demo-t" data-words data-en="Put a dish on your table.">Ponha um prato na sua mesa.</h2>
+      <p class="lead" data-r data-en="Pick a dish and turn it with your finger. On a phone, tap the button and it lands on the table in front of you.">Escolha um prato e gire com o dedo. No celular, toque no botão e ele aparece na mesa à sua frente.</p>
+    </div>
+    <div class="demo-g">
+      <div class="stage3d" data-r>
+        <model-viewer data-mv camera-controls touch-action="pan-y" interaction-prompt="none" disable-zoom ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor" shadow-intensity="1" shadow-softness=".85" exposure="1.05" environment-image="neutral" camera-orbit="-20deg 64deg auto" alt="Prato em 3D"></model-viewer>
+        <span class="hint"><svg><use href="#ar"/></svg><span data-en="Drag to turn">Arraste para girar</span></span>
+        <span class="load" data-load></span>
+      </div>
+      <div data-r>
+        <ul class="menu" role="radiogroup" aria-label="Pratos" data-en-label="Dishes">
+          <li><button type="button" role="radio" aria-checked="true" data-dish="risoto-funghi"><img src="img/d-risoto.webp" alt="" loading="lazy" /><span><span class="nm" data-dn>Risoto de cogumelos</span><span class="dt" data-dd>Arbóreo, mix de cogumelos, parmesão</span></span><span class="pr" data-dp>R$ 62</span></button></li>
+          <li><button type="button" role="radio" aria-checked="false" data-dish="pizza-margherita"><img src="img/d-margherita.webp" alt="" loading="lazy" /><span><span class="nm" data-dn>Pizza margherita</span><span class="dt" data-dd>Tomate, muçarela de búfala, manjericão</span></span><span class="pr" data-dp>R$ 68</span></button></li>
+          <li><button type="button" role="radio" aria-checked="false" data-dish="spaghetti-pomodoro"><img src="img/d-pomodoro.webp" alt="" loading="lazy" /><span><span class="nm" data-dn>Spaghetti al pomodoro</span><span class="dt" data-dd>Tomate fresco, manjericão</span></span><span class="pr" data-dp>R$ 48</span></button></li>
+          <li><button type="button" role="radio" aria-checked="false" data-dish="petit-gateau"><img src="img/d-petit.webp" alt="" loading="lazy" /><span><span class="nm" data-dn>Petit gâteau</span><span class="dt" data-dd>Chocolate meio amargo, sorvete de creme</span></span><span class="pr" data-dp>R$ 36</span></button></li>
         </ul>
-      </div>
-      <form class="c-form" data-contact novalidate>
-        <label><span>Seu nome</span><input name="nome" autocomplete="name" required /></label>
-        <label><span>Restaurante</span><input name="restaurante" autocomplete="organization" required /></label>
-        <label><span>Cidade</span><input name="cidade" autocomplete="address-level2" /></label>
-        <fieldset>
-          <legend>O que te interessa?</legend>
-          <div class="pick">
-            <label><input type="checkbox" name="interesse" value="Cardápio em RA" checked /><span>Cardápio em RA</span></label>
-            <label><input type="checkbox" name="interesse" value="Site" /><span>Site</span></label>
-            <label><input type="checkbox" name="interesse" value="Plaquinhas NFC" /><span>Plaquinhas NFC</span></label>
+        <div class="ar-act">
+          <button class="btn btn-p" type="button" data-ar hidden><svg><use href="#ar"/></svg><span data-ar-label>Ver na minha mesa</span></button>
+          <div class="qr" data-qr>
+            <div class="qr-code" data-qr-code aria-hidden="true"></div>
+            <p><b data-en="Open it on your phone">Abra no seu celular</b><span data-en="Point the camera at the code to see this dish on your table, in augmented reality.">Aponte a câmera para o código e veja este prato na sua mesa, em realidade aumentada.</span></p>
           </div>
-        </fieldset>
-        <button type="submit" class="btn-p light wide"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>Chamar no WhatsApp</button>
-        <p class="c-err" data-err hidden>Preencha o seu nome e o nome do restaurante.</p>
-      </form>
+          <a class="btn btn-g" data-wa="demo" href="#fim"><svg><use href="#wa"/></svg><span data-en="I want this on my menu">Quero isso no meu cardápio</span></a>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- ============ PLACA NFC/QR ============ -->
+<section class="placa" id="placa" aria-labelledby="placa-t">
+  <div class="placa-intro">
+    <div class="wrap">
+      <h2 class="h2 words" id="placa-t" data-words data-en="One plate on the table. The menu opens by itself.">Uma placa na mesa. O cardápio abre sozinho.</h2>
+      <p class="lead" data-r data-en="The NFC and QR plate is where everything starts: the menu, the dish in 3D and the reason for the guest to come back.">A placa com NFC e QR code é a porta de tudo: o cardápio, o prato em 3D e o motivo para o cliente voltar.</p>
+    </div>
+  </div>
+  <!-- Vídeo da placa (quando estiver pronto): salve em img/placa.mp4 (+ img/placa.webp como capa)
+       e ele entra aqui, entre a introdução e a história animada. -->
+  <div class="story" data-story>
+    <div class="story-in">
+      <div class="wrap story-g">
+        <div class="pstage" data-s="0" data-pstage aria-hidden="true">
+          <div class="plaque">
+            <span class="rn" data-en="Your restaurant">Seu restaurante</span>
+            <span class="pq" data-plaque-qr></span>
+            <span class="nfc"><svg><use href="#nfc"/></svg><span data-en="Tap your phone">Aproxime o celular</span></span>
+            <span class="pb">Powered by previa</span>
+          </div>
+          <div class="waves"><i></i><i></i><i></i></div>
+          <div class="phone"><div class="scr">
+            <div class="v v0"><span>20:30</span></div>
+            <div class="v v1">
+              <div class="rh"><span data-en="Your restaurant">Seu restaurante</span><span class="mono" data-en="Table 7">Mesa 7</span></div>
+              <div class="tabs"><span data-en="Mains">Pratos</span><span>Pizzas</span><span data-en="Desserts">Doces</span></div>
+              <div class="it"><img src="img/d-risoto.webp" alt="" loading="lazy" /><span><b data-en="Mushroom risotto">Risoto de cogumelos</b><em data-en="€ 18">R$ 62</em><br><span class="ar"><i></i><span data-en="See in 3D">Ver em 3D</span></span></span></div>
+              <div class="it"><img src="img/d-margherita.webp" alt="" loading="lazy" /><span><b>Pizza margherita</b><em data-en="€ 16">R$ 68</em><br><span class="ar"><i></i><span data-en="See in 3D">Ver em 3D</span></span></span></div>
+              <div class="it"><img src="img/d-petit.webp" alt="" loading="lazy" /><span><b data-en="Chocolate fondant">Petit gâteau</b><em data-en="€ 9">R$ 36</em><br><span class="ar"><i></i><span data-en="See in 3D">Ver em 3D</span></span></span></div>
+              <div class="it"><img src="img/d-tiramisu.webp" alt="" loading="lazy" /><span><b>Tiramisù</b><em data-en="€ 8">R$ 34</em></span></div>
+            </div>
+            <div class="v v2"><span class="ring"></span><img src="img/poster-risoto-funghi.webp" alt="" loading="lazy" /><div class="chip"><b data-en="Mushroom risotto">Risoto de cogumelos</b><span data-en="28 cm plate · real size">Prato de 28 cm · tamanho real</span></div></div>
+            <div class="v v3">
+              <div class="card"><b data-en="How was dinner?">Como foi o jantar?</b><div class="stars"><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg><svg><use href="#star"/></svg></div><span style="color:var(--pedra)" data-en="Review on Google">Avaliar no Google</span></div>
+              <div class="card"><b data-en="Loyalty card">Cartão fidelidade</b><div class="stamps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div></div>
+              <div class="card gift"><b data-en="Happy birthday">Feliz aniversário</b><span data-en="Dessert is on us this month.">A sobremesa deste mês é por nossa conta.</span></div>
+            </div>
+          </div></div>
+        </div>
+        <div class="stx">
+          <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="steps">
+            <div class="step on"><span class="n">01</span><h3 class="h2" data-en="Tap.">Aproxime.</h3><p data-en="The phone touches the plate and the menu opens. Nothing to download. Anyone who prefers can scan the QR code.">O celular encosta na placa e o cardápio abre. Nada para baixar. Quem preferir aponta a câmera para o QR code.</p></div>
+            <div class="step"><span class="n">02</span><h3 class="h2" data-en="Choose.">Escolha.</h3><p data-en="Photos, descriptions and prices, in your restaurant’s look. The plate already knows which table it is.">Fotos, descrição e preço, com a cara do seu restaurante. A placa já sabe qual é a mesa.</p></div>
+            <div class="step"><span class="n">03</span><h3 class="h2" data-en="See it on the table.">Veja na mesa.</h3><p data-en="One tap and the dish appears in 3D, at real size, right in front of the guest.">Um toque e o prato aparece em 3D, no tamanho real, bem na frente do cliente.</p></div>
+            <div class="step"><span class="n">04</span><h3 class="h2" data-en="Come back.">Volte.</h3><p data-en="The same plate leads to a Google review, the loyalty card and the birthday treat.">A mesma placa leva à avaliação no Google, ao cartão fidelidade e ao presente de aniversário.</p><span class="tag" data-en="Complete plan">Plano Completo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap placa-out">
+    <div class="mat" data-r>
+      <div><b>NFC</b><span data-en="Tap and it opens.">Encostou, abriu.</span></div>
+      <div><b>QR code</b><span data-en="For any phone.">Para qualquer celular.</span></div>
+      <div><b data-en="Your brand">Sua marca</b><span data-en="The restaurant’s logo and colours.">Logo e cores do restaurante.</span></div>
+    </div>
+    <div class="row" data-r>
+      <a class="btn btn-l" data-wa="placa" href="#fim"><svg><use href="#wa"/></svg><span data-en="I want plates on my tables">Quero placas nas minhas mesas</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MESA E DELIVERY ============ -->
+<section class="canais" id="canais" data-m="mesa" aria-labelledby="canais-t">
+  <div class="wrap canais-g">
+    <div>
+      <h2 class="h2 words" id="canais-t" data-words data-en="Same menu. At the table or at home.">Mesmo cardápio. Na mesa ou em casa.</h2>
+      <p class="lead" data-r style="margin-top:18px" data-en="You update it once. In the restaurant the guest sees the dish on the table; at home, they order with one tap.">Você atualiza uma vez só. No salão, o cliente vê o prato na mesa; em casa, pede com um toque.</p>
+      <div data-r>
+        <div class="seg" role="group" aria-label="Modo do cardápio" data-en-label="Menu mode">
+          <span class="pill" aria-hidden="true"></span>
+          <button type="button" aria-pressed="true" data-mode="mesa" data-en="At the table">Na mesa</button>
+          <button type="button" aria-pressed="false" data-mode="delivery">Delivery</button>
+        </div>
+      </div>
+      <div class="modes" data-r>
+        <div class="md-m"><svg><use href="#nfc"/></svg><div><b data-en="At the table">Na mesa</b><span data-en="Opened from the plate. “See it on your table” on every dish.">Aberto pela placa. “Ver na sua mesa” em cada prato.</span><span class="opt" data-en="Optional: call the waiter, ask for the bill and order from the table (Dining plan).">Opcional: chamar garçom, pedir a conta e fazer o pedido pela mesa (plano Salão).</span></div></div>
+        <div class="md-d"><svg><use href="#bag"/></svg><div><b>Delivery</b><span data-en="Opened from your Instagram or a link. The order goes to your WhatsApp, or to your iFood page if you use it.">Aberto pelo Instagram ou por link. O pedido vai para o seu WhatsApp, ou para a sua página no iFood se você usa.</span></div></div>
+      </div>
+    </div>
+    <div class="phone2" data-r aria-hidden="true">
+      <div class="scr">
+        <div class="ph"><span class="badge"><i></i><span data-en="Available in 3D">Disponível em 3D</span></span></div>
+        <div class="bd">
+          <div class="rest"><span data-en="Your restaurant">Seu restaurante</span><span data-mode-label>Mesa 7</span></div>
+          <h4>Pizza margherita</h4>
+          <p class="ds" data-en="Tomato, buffalo mozzarella and basil. Serves 2.">Tomate, muçarela de búfala e manjericão. Serve 2.</p>
+          <p class="pz" data-en="€ 16">R$ 68</p>
+        </div>
+        <div class="acts">
+          <div class="a-m"><span class="b b1"><svg><use href="#ar"/></svg><span data-en="See it on your table">Ver na sua mesa</span></span><span class="duo"><span class="b b2" data-en="Call waiter">Chamar garçom</span><span class="b b2" data-en="Ask for the bill">Pedir a conta</span></span></div>
+          <div class="a-d"><span class="b b1"><svg><use href="#wa"/></svg><span data-en="Order on WhatsApp">Pedir pelo WhatsApp</span></span><span class="b b2" data-en="Order on iFood">Pedir no iFood</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAINEL ============ -->
+<section class="painel" id="painel" aria-labelledby="painel-t">
+  <div class="wrap">
+    <div class="painel-head">
+      <h2 class="h2 words" id="painel-t" data-words data-en="You change the menu in seconds.">Você muda o cardápio em segundos.</h2>
+      <p class="lead" data-r data-en="Price, sold out, hidden dish: one tap and it’s live on every table and on delivery. No designer, no reprinting.">Preço, esgotado, prato escondido: um toque e já vale em todas as mesas e no delivery. Sem designer, sem reimprimir.</p>
+    </div>
+    <div class="pg">
+      <div class="board" data-r data-board aria-hidden="true">
+        <div class="board-top"><b data-en="Menu">Cardápio</b><span data-en="Your restaurant · 24 dishes">Seu restaurante · 24 pratos</span></div>
+        <div class="dr"><img src="img/d-risoto.webp" alt="" loading="lazy" /><div><div class="nm" data-en="Mushroom risotto">Risoto de cogumelos</div><div class="pr"><span class="v" data-price>R$ 62,00</span><span class="caret"></span></div></div><span class="tg"><span data-en="On">Ativo</span><i></i></span><span class="eye"><svg><use href="#eye"/></svg></span></div>
+        <div class="dr"><img src="img/d-margherita.webp" alt="" loading="lazy" /><div><div class="nm">Pizza margherita</div><div class="pr"><span class="v" data-en="€ 16.00">R$ 68,00</span></div></div><span class="tg"><span data-en="On">Ativo</span><i></i></span><span class="eye"><svg><use href="#eye"/></svg></span></div>
+        <div class="dr"><img src="img/d-tiramisu.webp" alt="" loading="lazy" /><div><div class="nm">Tiramisù</div><div class="pr"><span class="v" data-en="€ 8.00">R$ 34,00</span></div></div><span class="tg" data-sold><span data-tg-label>Ativo</span><i></i></span><span class="eye"><svg><use href="#eye"/></svg></span></div>
+        <div class="dr" data-hide><img src="img/d-alfredo.webp" alt="" loading="lazy" /><div><div class="nm">Fettuccine alfredo</div><div class="pr"><span class="v" data-en="€ 15.00">R$ 58,00</span></div></div><span class="tg"><span data-en="On">Ativo</span><i></i></span><span class="eye"><svg><use href="#eye"/></svg></span></div>
+        <div class="toast" data-toast><i></i><span data-toast-t></span></div>
+      </div>
+      <div class="cap" data-r data-cap>
+        <h3 class="h3" data-en="The 3D comes from your phone.">O 3D sai do seu celular.</h3>
+        <svg class="orb" viewBox="0 0 320 210" aria-hidden="true">
+          <ellipse cx="160" cy="128" rx="54" ry="18" fill="#3A413C"/>
+          <ellipse cx="160" cy="122" rx="30" ry="10" fill="#5F6660"/>
+          <g fill="none" stroke-width="1.6">
+            <ellipse data-lap cx="160" cy="128" rx="138" ry="46" stroke="#8DA392" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+            <ellipse data-lap cx="160" cy="110" rx="108" ry="36" stroke="#8DA392" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+            <ellipse data-lap cx="160" cy="92" rx="78" ry="26" stroke="#8DA392" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+          </g>
+          <circle data-done cx="160" cy="62" r="8" fill="#A07C45" opacity="0"/>
+          <text data-done-t x="160" y="202" text-anchor="middle" fill="#A9E3CF" font-family="Geist Mono, monospace" font-size="11" opacity="0">3D · 28 cm</text>
+        </svg>
+        <ol>
+          <li data-st data-en="Film three laps around the dish with your phone.">Grave três voltas ao redor do prato com o celular.</li>
+          <li data-st data-en="Previa turns the video into a 3D model.">A Previa transforma o vídeo em um modelo 3D.</li>
+          <li data-st data-en="Review and publish. It goes live at real size.">Revise e publique. Ele entra no tamanho real.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DADOS ============ -->
+<section class="dados" id="dados" aria-labelledby="dados-t">
+  <div class="wrap">
+    <h2 class="h2 words" id="dados-t" data-words style="max-width:12em" data-en="Know what sells at the table and what sells on delivery.">Saiba o que vende na mesa e o que vende no delivery.</h2>
+    <div class="dash" data-dash data-f="todos" data-r>
+      <div class="dash-top">
+        <span class="small" data-en="Last 30 days · sample data">Últimos 30 dias · dados de exemplo</span>
+        <div class="fl" role="group" aria-label="Filtro" data-en-label="Filter"><button type="button" aria-pressed="true" data-flt="todos" data-en="All">Todos</button><button type="button" aria-pressed="false" data-flt="mesa" data-en="Table">Mesa</button><button type="button" aria-pressed="false" data-flt="delivery">Delivery</button></div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k" data-en="Menu visits">Acessos ao cardápio</div><div class="val" data-n="12480">12.480</div></div>
+        <div class="kpi"><div class="k" data-en="Seen in 3D">Vistos em 3D</div><div class="val" data-n="3920">3.920</div></div>
+        <div class="kpi"><div class="k" data-en="Delivery orders">Pedidos delivery</div><div class="val" data-n="1130">1.130</div></div>
+        <div class="kpi"><div class="k" data-en="New customers">Clientes novos</div><div class="val" data-n="418">418</div></div>
+      </div>
+      <div>
+        <div class="chart-h"><b data-en="Visits by weekday">Acessos por dia da semana</b><div class="legend"><span><i style="background:var(--louro)"></i><span data-en="Table">Mesa</span></span><span><i style="background:var(--salvia)"></i>Delivery</span></div></div>
+        <div class="bars" data-bars role="img" aria-label="Acessos por dia: sábado é o dia mais forte na mesa e sexta no delivery." data-en-label="Visits by day: Saturday is strongest at the table and Friday on delivery."></div>
+        <div class="days" data-days></div>
+      </div>
+      <div class="side">
+        <div class="insight"><b data-en="Looked, didn’t order">Olhou e não pediu</b><span data-en="Tiramisù: 212 views in 3D and 9 orders. Worth a new photo or an entry price.">Tiramisù: 212 visualizações em 3D e 9 pedidos. Vale uma foto nova ou um preço de entrada.</span></div>
+        <div class="insight"><b data-en="Delivery champion">Campeão no delivery</b><span data-en="Pizza margherita, 31% of WhatsApp orders. Friday is the strongest day.">Pizza margherita, 31% dos pedidos pelo WhatsApp. Sexta é o dia mais forte.</span></div>
+        <p class="dash-note" data-en="Every channel lands in the same panel: table plates, Instagram link and delivery.">Todos os canais caem no mesmo painel: placas da mesa, link do Instagram e delivery.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARA QUEM ============ -->
+<section class="quem" id="para-quem" aria-labelledby="quem-t">
+  <div class="wrap quem-h">
+    <h2 class="h2 words" id="quem-t" data-words data-en="For any kitchen.">Para qualquer cozinha.</h2>
+    <div class="strip-nav"><button type="button" data-sn="-1" aria-label="Anterior" data-en-label="Previous"><svg style="transform:scaleX(-1)"><use href="#arr"/></svg></button><button type="button" data-sn="1" aria-label="Próximo" data-en-label="Next"><svg><use href="#arr"/></svg></button></div>
+  </div>
+  <div class="strip" data-strip>
+    <figure><div class="ph"><img src="img/d-margherita.webp" alt="Pizza margherita" loading="lazy" /></div><figcaption><b data-en="Pizzerias">Pizzarias</b><span>01</span></figcaption></figure>
+    <figure><div class="ph"><img src="img/d-smash.webp" alt="Hambúrguer" data-en-alt="Burger" loading="lazy" /></div><figcaption><b data-en="Burger joints">Hamburguerias</b><span>02</span></figcaption></figure>
+    <figure><div class="ph"><img src="img/d-poke.webp" alt="Poke de salmão" data-en-alt="Salmon poke" loading="lazy" /></div><figcaption><b data-en="Sushi &amp; poke">Sushi e poke</b><span>03</span></figcaption></figure>
+    <figure><div class="ph"><img src="img/d-risoto.webp" alt="Risoto" data-en-alt="Risotto" loading="lazy" /></div><figcaption><b data-en="Restaurants">Restaurantes</b><span>04</span></figcaption></figure>
+    <figure><div class="ph"><img src="img/d-petit.webp" alt="Petit gâteau" loading="lazy" /></div><figcaption><b data-en="Dessert shops">Docerias</b><span>05</span></figcaption></figure>
+    <figure><div class="ph"><img src="img/d-tiramisu.webp" alt="Tiramisù" loading="lazy" /></div><figcaption><b data-en="Cafés">Cafeterias</b><span>06</span></figcaption></figure>
+    <figure><div class="ph"><img src="img/d-alfredo.webp" alt="Fettuccine" loading="lazy" /></div><figcaption><b data-en="Trattorias">Cantinas</b><span>07</span></figcaption></figure>
+    <figure><div class="ph"><img src="img/d-pomodoro.webp" alt="Spaghetti" loading="lazy" /></div><figcaption><b data-en="Bars &amp; gastropubs">Bares e gastrobares</b><span>08</span></figcaption></figure>
+  </div>
+</section>
+
+<!-- ============ PLANOS ============ -->
+<section class="planos" id="planos" aria-labelledby="planos-t">
+  <div class="wrap">
+    <h2 class="h2 words" id="planos-t" data-words style="max-width:11em" data-en="Start with the essentials. Grow when you want.">Comece pelo essencial. Cresça quando quiser.</h2>
+    <div class="ptabs" role="tablist" aria-label="Planos" data-en-label="Plans">
+      <button type="button" role="tab" aria-selected="true" data-p="0" data-en="Essential">Essencial</button>
+      <button type="button" role="tab" aria-selected="false" data-p="1" data-en="Dining">Salão</button>
+      <button type="button" role="tab" aria-selected="false" data-p="2" data-en="Complete">Completo</button>
+    </div>
+    <div class="ptable">
+      <div class="pcol on feat">
+        <h3 class="pn" data-en="Essential">Essencial</h3>
+        <p class="pd" data-en="The clean menu with dishes in 3D. What every restaurant needs to start.">O cardápio limpo, com os pratos em 3D. O que todo restaurante precisa para começar.</p>
+        <ul>
+          <li data-en="Digital menu with your brand">Cardápio digital com a sua marca</li>
+          <li data-en="Dishes in 3D and augmented reality">Pratos em 3D e realidade aumentada</li>
+          <li data-en="NFC and QR plates for the tables">Placas NFC e QR para as mesas</li>
+          <li data-en="Owner panel: price, sold out, hide">Painel do dono: preço, esgotado, ocultar</li>
+          <li data-en="3D capture with your phone">Criação de 3D pelo celular</li>
+        </ul>
+        <a class="btn btn-p" data-wa="essencial" href="#fim"><svg><use href="#wa"/></svg><span data-en="I want Essential">Quero o Essencial</span></a>
+        <p class="pp" data-en="Priced by number of tables.">Valor de acordo com o número de mesas.</p>
+      </div>
+      <div class="pcol">
+        <h3 class="pn" data-en="Dining">Salão</h3>
+        <p class="pd" data-en="For when you want the menu to work the dining room and delivery too.">Para quem quer que o cardápio também trabalhe no salão e no delivery.</p>
+        <ul>
+          <li class="inh" data-en="Everything in Essential">Tudo do Essencial</li>
+          <li data-en="Call the waiter and ask for the bill">Chamar garçom e pedir a conta</li>
+          <li data-en="Ordering from the table">Pedido pela mesa</li>
+          <li data-en="Delivery via WhatsApp or iFood link">Delivery pelo WhatsApp ou link do iFood</li>
+          <li data-en="Dashboard: table and delivery">Dashboard mesa e delivery</li>
+        </ul>
+        <a class="btn btn-g" data-wa="salao" href="#fim"><svg><use href="#wa"/></svg><span data-en="I want Dining">Quero o Salão</span></a>
+        <p class="pp" data-en="On request.">Sob consulta.</p>
+      </div>
+      <div class="pcol">
+        <h3 class="pn" data-en="Complete">Completo</h3>
+        <p class="pd" data-en="The plate becomes the way back: reviews, loyalty and bookings.">A placa vira o caminho de volta: avaliações, fidelidade e reservas.</p>
+        <ul>
+          <li class="inh" data-en="Everything in Dining">Tudo do Salão</li>
+          <li data-en="Google reviews from the plate">Avaliações no Google pela placa</li>
+          <li data-en="Loyalty, vouchers and birthdays">Fidelidade, cupons e aniversários</li>
+          <li data-en="Bookings and waitlist">Reservas e fila de espera</li>
+          <li data-en="Restaurant website">Site do restaurante</li>
+        </ul>
+        <a class="btn btn-g" data-wa="completo" href="#fim"><svg><use href="#wa"/></svg><span data-en="I want Complete">Quero o Completo</span></a>
+        <p class="pp" data-en="On request.">Sob consulta.</p>
+      </div>
+    </div>
+    <p class="small pnote" data-r data-en="Dining and Complete features are released in stages. Message us to see what is already available for your restaurant.">Os recursos do Salão e do Completo são liberados por etapas. Chame a gente para ver o que já está disponível para o seu restaurante.</p>
+  </div>
+</section>
+
+<!-- ============ CONFIANÇA + FAQ ============ -->
+<section class="conf" aria-labelledby="conf-t">
+  <div class="wrap conf-g">
+    <div>
+      <h2 class="h2 words" id="conf-t" data-words data-en="Your brand up front. Your data with you.">Sua marca na frente. Seus dados com você.</h2>
+      <div class="trust">
+        <div data-r><b data-en="Guest data belongs to the restaurant">Os dados dos clientes são do restaurante</b><span data-en="Previa doesn’t sell or share them. LGPD and GDPR from day one.">A Previa não vende nem compartilha. LGPD e GDPR desde o primeiro dia.</span></div>
+        <div data-r><b data-en="Previa stays in the background">A Previa fica nos bastidores</b><span data-en="Your guest sees your restaurant. We only appear as a discreet “Powered by previa” in the footer.">Seu cliente vê o seu restaurante. A gente aparece só como um “Powered by previa” discreto no rodapé.</span></div>
+      </div>
+    </div>
+    <div class="faq" data-r>
+      <details><summary><span data-en="Does the guest need to download an app?">O cliente precisa baixar algum app?</span><i></i></summary><p data-en="No. The menu opens in the phone’s browser by tapping the plate (NFC) or scanning the QR code.">Não. O cardápio abre no navegador do celular, encostando na placa (NFC) ou lendo o QR code.</p></details>
+      <details><summary><span data-en="Does it work on any phone?">Funciona em qualquer celular?</span><i></i></summary><p data-en="It works on iPhone and Android. Phones with augmented reality place the dish on the table; the others show the dish in 3D on screen.">Funciona em iPhone e Android. Os celulares com realidade aumentada colocam o prato na mesa; os outros mostram o prato em 3D na tela.</p></details>
+      <details><summary><span data-en="How do my dishes become 3D?">Como os meus pratos viram 3D?</span><i></i></summary><p data-en="You film the dish with your phone, three laps around it. Previa turns that into a real-size model and you publish it from the panel.">Você grava o prato com o celular, dando três voltas ao redor. A Previa transforma isso em um modelo no tamanho real e você publica pelo painel.</p></details>
+      <details><summary><span data-en="Can I change prices and dishes myself?">Posso mudar preços e pratos sozinho?</span><i></i></summary><p data-en="Yes. In the panel you change prices, mark dishes as sold out and hide them. It updates on every table and on delivery at the same time.">Sim. No painel você muda preço, marca como esgotado e esconde pratos. Atualiza em todas as mesas e no delivery ao mesmo tempo.</p></details>
+      <details><summary><span data-en="How much does it cost?">Quanto custa?</span><i></i></summary><p data-en="It depends on the plan and the number of tables. Message us on WhatsApp and we’ll send a proposal for your restaurant.">Depende do plano e do número de mesas. Chame no WhatsApp que a gente manda uma proposta para o seu restaurante.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section class="fim" id="fim" aria-labelledby="fim-t">
+  <svg class="rings" viewBox="0 0 64 64" aria-hidden="true"><use href="#logo"/></svg>
+  <div class="wrap">
+    <h2 class="h1 words" id="fim-t" data-words data-en="Let’s put your menu on the table.">Vamos colocar seu cardápio na mesa.</h2>
+    <p class="lead" data-r data-en="Send us your restaurant’s name and how many tables you have. We’ll reply on WhatsApp with a 3D dish for you to see.">Mande o nome do seu restaurante e quantas mesas você tem. A gente responde no WhatsApp com um prato em 3D para você ver.</p>
+    <div data-r><a class="btn btn-l" data-wa="geral" href="#fim"><svg><use href="#wa"/></svg><span data-en="Chat on WhatsApp">Chamar no WhatsApp</span></a></div>
+    <p class="alt" data-r><span data-en="Want to see it first?">Prefere ver antes?</span> <a href="#demo" data-en="Put a dish on your table">Ponha um prato na sua mesa</a></p>
     <footer class="foot">
-      <span class="logo small"><svg viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M5 32a27 27 0 1 0 54 0a27 27 0 1 0 -54 0ZM8 31.2a24 24 0 1 0 48 0a24 24 0 1 0 -48 0ZM15 37a17 17 0 1 0 34 0a17 17 0 1 0 -34 0ZM17.4 36.3a14.6 14.6 0 1 0 29.2 0a14.6 14.6 0 1 0 -29.2 0Z"/><circle cx="32" cy="42" r="7" fill="var(--latao)"/></svg><span class="word">prev<span class="i">ı</span>a</span></span>
-      <span>Veja antes de pedir.</span>
-      <span>© 2026 Previa</span>
+      <a class="wm" href="#top" aria-label="Previa"><svg><use href="#logo"/></svg><span>prev<span class="i">ı</span>a</span></a>
+      <div class="foot-b">
+        <nav aria-label="Rodapé" data-en-label="Footer"><a href="#demo" data-en="Demo">Demonstração</a><a href="#placa" data-en="Table plate">A placa</a><a href="#painel" data-en="Owner panel">Painel</a><a href="#planos" data-en="Plans">Planos</a></nav>
+        <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-lang="pt" aria-pressed="true">PT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+        <span>© 2026 Previa · rprevia.com</span>
+      </div>
     </footer>
-  </section>
+  </div>
+</section>
 </main>
 
-<nav class="mbar" aria-label="Atalhos">
-  <a class="ra" href="#demo">Ver em RA</a>
-  <a class="go" href="#contato"><span class="dot" aria-hidden="true"></span>Quero a Previa</a>
-</nav>
+<div class="mbar" data-mbar>
+  <a class="btn btn-p" data-wa="geral" href="#fim"><svg><use href="#wa"/></svg><span data-en="Chat on WhatsApp">Chamar no WhatsApp</span></a>
+  <a class="btn btn-g" href="#demo" aria-label="Ver um prato na mesa" data-en-label="See a dish on the table"><svg><use href="#ar"/></svg></a>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/DrawSVGPlugin.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js"></script>
 <script>
 (() => {
-  const root = document.documentElement;
-  const reveal = () => { root.setAttribute('data-page-ready', ''); document.querySelectorAll('[data-text-reveal],[data-scroll-reveal]').forEach(e => e.style.visibility = 'visible'); const w = document.querySelector('.wipe'); if (w) w.setAttribute('data-transition-ready', ''); };
-  setTimeout(() => { if (!root.hasAttribute('data-page-ready')) reveal(); }, 4000);
-  /* Demonstração em RA: model-viewer carregado só quando a seção se aproxima */
-  function initDemo() {
-    const root = document.querySelector('#demo'); if (!root) return;
-    const DISHES = {
-      'pizza-margherita': { name: 'Pizza margherita', detail: 'Molho de tomate, muçarela de búfala, manjericão', data: '29 cm · serve 2 · R$ 68' },
-      'risoto-funghi': { name: 'Risoto de cogumelos', detail: 'Arbóreo, mix de cogumelos, parmesão, tomilho', data: 'Prato de 28 cm · R$ 62' },
-      'spaghetti-pomodoro': { name: 'Spaghetti al pomodoro', detail: 'Molho de tomate fresco, manjericão', data: 'Prato de 27 cm · R$ 48' }
+  /* Número de WhatsApp da Previa: DDI + DDD + número, só dígitos (ex.: 5511999999999) */
+  const WHATSAPP = '';
+
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mobile = matchMedia('(hover: none), (pointer: coarse)').matches && matchMedia('(max-width: 991px)').matches;
+  let lang = 'pt';
+  const T = (pt, en) => lang === 'en' ? en : pt;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const onceVisible = (el, fn, margin = '0px 0px -15% 0px') => new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { o.disconnect(); fn(); } }, { rootMargin: margin }).observe(el);
+  const fmtN = n => n.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR');
+
+  /* ---------- WhatsApp ---------- */
+  const MSG = {
+    geral: ['Olá, Previa! Quero conhecer o cardápio com realidade aumentada para o meu restaurante.', 'Hi Previa! I’d like to know more about the augmented reality menu for my restaurant.'],
+    demo: ['Olá, Previa! Vi o prato na mesa pelo site e quero isso no meu cardápio.', 'Hi Previa! I saw the dish on my table on your site and I want this on my menu.'],
+    placa: ['Olá, Previa! Quero saber mais sobre as placas NFC/QR para as mesas.', 'Hi Previa! I’d like to know more about the NFC/QR table plates.'],
+    essencial: ['Olá, Previa! Quero saber mais sobre o plano Essencial.', 'Hi Previa! I’d like to know more about the Essential plan.'],
+    salao: ['Olá, Previa! Quero saber mais sobre o plano Salão.', 'Hi Previa! I’d like to know more about the Dining plan.'],
+    completo: ['Olá, Previa! Quero saber mais sobre o plano Completo.', 'Hi Previa! I’d like to know more about the Complete plan.']
+  };
+  const setWa = () => $$('[data-wa]').forEach(a => {
+    const m = MSG[a.dataset.wa] || MSG.geral;
+    a.href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(m[lang === 'en' ? 1 : 0])}`;
+    a.target = '_blank'; a.rel = 'noopener';
+  });
+
+  /* ---------- Idioma (PT / EN) ---------- */
+  const META = {
+    pt: ['Previa · Cardápio em realidade aumentada para restaurantes', 'Cardápio com realidade aumentada para restaurantes. O cliente aproxima o celular da placa na mesa e vê o prato em 3D, no tamanho real, antes de pedir.'],
+    en: ['Previa · Augmented reality menus for restaurants', 'Augmented reality menus for restaurants. Guests tap their phone on the table plate and see the dish in 3D, at real size, before they order.']
+  };
+  const langHooks = [];
+  function splitWords(el) {
+    const txt = el.textContent.trim();
+    el.innerHTML = txt.split(/\s+/).map((w, i) => `<span class="w" aria-hidden="true"><span style="transition-delay:${i * 45}ms">${w}</span></span>`).join(' ');
+    el.setAttribute('aria-label', txt);
+  }
+  function setLang(l) {
+    lang = l === 'en' ? 'en' : 'pt';
+    document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+    $$('[data-en]').forEach(el => {
+      if (el.dataset.pt === undefined) el.dataset.pt = el.innerHTML;
+      el.innerHTML = lang === 'en' ? el.dataset.en : el.dataset.pt;
+    });
+    [['data-en-label', 'aria-label'], ['data-en-alt', 'alt']].forEach(([k, attr]) => $$(`[${k}]`).forEach(el => {
+      const key = 'orig' + attr.replace('-', '');
+      if (el.dataset[key] === undefined) el.dataset[key] = el.getAttribute(attr) || '';
+      el.setAttribute(attr, lang === 'en' ? el.getAttribute(k) : el.dataset[key]);
+    }));
+    $$('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    document.title = META[lang][0]; $('meta[name=description]').content = META[lang][1];
+    $$('[data-words]').forEach(splitWords);
+    setWa(); langHooks.forEach(f => f());
+    try { localStorage.setItem('previa-lang', lang); } catch (e) {}
+  }
+  $$('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+
+  /* ---------- Revelação ao rolar ---------- */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+
+  /* ---------- Navegação e barra do celular ---------- */
+  function initNav() {
+    const nav = $('[data-nav]'), bar = $('[data-mbar]'), hero = $('.hero'), fim = $('#fim');
+    let last = 0, tick = false;
+    const run = () => {
+      tick = false;
+      const y = scrollY, h = hero.offsetHeight;
+      nav.classList.toggle('solid', y > 40);
+      if (y > h && y > last + 6) nav.classList.add('hide'); else if (y < last - 6 || y < h) nav.classList.remove('hide');
+      last = y;
+      bar.classList.toggle('on', y > h * .7 && fim.getBoundingClientRect().top > innerHeight * .8);
     };
-    const mv = root.querySelector('[data-mv]'), arBtn = root.querySelector('[data-ar]'), arLabel = root.querySelector('[data-ar-label]');
-    const qr = root.querySelector('[data-qr]'), load = root.querySelector('[data-load]');
-    const radios = [...root.querySelectorAll('[data-dish]')];
-    const f = k => root.querySelector(`[data-f="${k}"]`);
-    const mobile = matchMedia('(hover: none), (pointer: coarse)').matches && matchMedia('(max-width: 991px)').matches;
-    let current = 'pizza-margherita';
+    addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(run); } }, { passive: true }); run();
+  }
+
+  /* ---------- Hero: mesa em vídeo + prato que pousa ---------- */
+  function initHero() {
+    const v = $('[data-hero]');
+    const m = matchMedia('(max-aspect-ratio: 1/1)').matches;
+    v.poster = m ? v.dataset.posterM : v.dataset.poster;
+    if (!reduce) { v.src = m ? v.dataset.srcM : v.dataset.src; v.autoplay = true; v.play().catch(() => {}); }
+    const land = $('[data-land]'), imgs = $$('img', land), halo = $('.halo', land);
+    const NAMES = { 'risoto-funghi': ['Risoto de cogumelos', 'Mushroom risotto', '28 cm'], 'pizza-margherita': ['Pizza margherita', 'Pizza margherita', '29 cm'], 'petit-gateau': ['Petit gâteau', 'Chocolate fondant', '8 cm'], 'spaghetti-pomodoro': ['Spaghetti al pomodoro', 'Spaghetti al pomodoro', '27 cm'] };
+    let i = 0;
+    const label = () => { const n = NAMES[imgs[i].dataset.k]; $('[data-land-name]').textContent = T(n[0], n[1]); $('[data-land-size]').textContent = n[2]; };
+    langHooks.push(label); label();
+    const ping = () => { halo.classList.remove('ping'); void halo.offsetWidth; halo.classList.add('ping'); };
+    setTimeout(ping, 900);
+    if (reduce) return;
+    setInterval(() => {
+      if (document.hidden || scrollY > innerHeight) return;
+      const cur = imgs[i]; cur.classList.replace('on', 'out');
+      i = (i + 1) % imgs.length; const nx = imgs[i];
+      setTimeout(() => { cur.classList.remove('out'); nx.classList.add('on'); label(); setTimeout(ping, 520); }, 380);
+    }, 4200);
+  }
+
+  function countUp(el, to, dur = 1400) {
+    if (reduce) { el.textContent = fmtN(to); return; }
+    const t0 = performance.now();
+    const step = t => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = fmtN(Math.round(to * e)); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- QR code (biblioteca carregada só quando precisa) ---------- */
+  let qrLib;
+  const loadQr = () => qrLib ??= new Promise(res => {
+    if (window.qrcode) return res();
+    const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+    s.onload = res; s.onerror = res; document.head.appendChild(s);
+  });
+
+  /* ---------- Demonstração em RA ---------- */
+  function initDemo() {
+    const root = $('#demo');
+    const DISHES = {
+      'risoto-funghi': { pt: ['Risoto de cogumelos', 'Arbóreo, mix de cogumelos, parmesão', 'R$ 62'], en: ['Mushroom risotto', 'Arborio, mixed mushrooms, parmesan', '€ 18'] },
+      'pizza-margherita': { pt: ['Pizza margherita', 'Tomate, muçarela de búfala, manjericão', 'R$ 68'], en: ['Pizza margherita', 'Tomato, buffalo mozzarella, basil', '€ 16'] },
+      'spaghetti-pomodoro': { pt: ['Spaghetti al pomodoro', 'Tomate fresco, manjericão', 'R$ 48'], en: ['Spaghetti al pomodoro', 'Fresh tomato, basil', '€ 14'] },
+      'petit-gateau': { pt: ['Petit gâteau', 'Chocolate meio amargo, sorvete de creme', 'R$ 36'], en: ['Chocolate fondant', 'Dark chocolate, vanilla ice cream', '€ 9'] }
+    };
+    const mv = $('[data-mv]', root), arBtn = $('[data-ar]', root), arLabel = $('[data-ar-label]', root), qr = $('[data-qr]', root), load = $('[data-load]', root);
+    const radios = $$('[data-dish]', root);
+    let current = 'risoto-funghi';
     const q = new URLSearchParams(location.search).get('prato'); if (q && DISHES[q]) current = q;
-
-    // No celular: botão de RA. No computador: QR code para abrir no celular.
     arBtn.hidden = !mobile; qr.hidden = mobile;
-    if (mobile) { arBtn.disabled = true; arLabel.textContent = 'Carregando o prato…'; }
-
-    // O .glb vem direto do servidor; onde ele não é servido (prévia), cai para a cópia em base64.
+    const AR = { load: ['Carregando o prato…', 'Loading the dish…'], ok: ['Ver na minha mesa', 'See it on my table'], no: ['Abra no Chrome ou Safari para ver em RA', 'Open in Chrome or Safari to see it in AR'], err: ['Não foi possível carregar o prato', 'Couldn’t load the dish'] };
+    const arText = s => { arLabel.dataset.s = s; arLabel.textContent = T(...AR[s]); };
+    const labels = () => {
+      radios.forEach(r => { const d = DISHES[r.dataset.dish][lang]; $('[data-dn]', r).textContent = d[0]; $('[data-dd]', r).textContent = d[1]; $('[data-dp]', r).textContent = d[2]; });
+      mv.alt = T(`${DISHES[current].pt[0]} em 3D`, `${DISHES[current].en[0]} in 3D`);
+      if (arLabel.dataset.s) arText(arLabel.dataset.s);
+    };
+    langHooks.push(labels);
     const cache = new Map();
     const modelSrc = id => {
       if (!cache.has(id)) cache.set(id, fetch(`models/${id}.glb`, { method: 'HEAD' })
@@ -628,295 +1032,177 @@ html[data-theme="dark"] .mbar { background: rgba(20,26,22,.82); border-top-color
       s.src = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js';
       s.onload = () => customElements.whenDefined('model-viewer').then(res); s.onerror = rej; document.head.appendChild(s);
     });
-    /* Gerador de QR code: só carrega no computador, que é onde o QR aparece */
-    let qrLib;
-    const loadQr = () => qrLib ??= new Promise(res => {
-      if (window.qrcode) return res();
-      const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
-      s.onload = res; s.onerror = res; document.head.appendChild(s);
-    });
     const drawQr = async () => {
       if (mobile) return;
       await loadQr(); if (!window.qrcode) return;
       const url = new URL(location.href); url.hash = 'demo'; url.search = `?prato=${current}`;
       const code = qrcode(0, 'M'); code.addData(url.toString()); code.make();
-      root.querySelector('[data-qr-code]').innerHTML = code.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+      $('[data-qr-code]', root).innerHTML = code.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
     };
     async function show(id) {
-      current = id; const d = DISHES[id];
+      current = id;
       radios.forEach(r => r.setAttribute('aria-checked', String(r.dataset.dish === id)));
-      f('name').textContent = d.name; f('detail').textContent = d.detail; f('data').textContent = d.data;
-      mv.alt = `${d.name} em 3D`; mv.poster = `img/poster-${id}.webp`;
+      mv.poster = `img/poster-${id}.webp`; labels();
       load.removeAttribute('data-done'); load.style.setProperty('--p', '8%');
-      if (mobile) { arBtn.disabled = true; arLabel.textContent = 'Carregando o prato…'; }
+      if (mobile) { arBtn.disabled = true; arText('load'); }
       drawQr();
-      try { await loadViewer(); mv.src = await modelSrc(id); } catch (e) { load.setAttribute('data-done', ''); if (mobile) arLabel.textContent = 'Não foi possível carregar o prato'; }
+      try { await loadViewer(); mv.src = await modelSrc(id); } catch (e) { load.setAttribute('data-done', ''); if (mobile) arText('err'); }
     }
     mv.addEventListener('progress', e => load.style.setProperty('--p', Math.round(e.detail.totalProgress * 100) + '%'));
     mv.addEventListener('load', () => {
       load.setAttribute('data-done', '');
       if (!mobile) return;
-      if (mv.canActivateAR) { arBtn.disabled = false; arLabel.textContent = 'Ver na minha mesa'; }
-      else { arBtn.disabled = true; arLabel.textContent = 'Abra no Chrome ou Safari para ver em RA'; }
+      if (mv.canActivateAR) { arBtn.disabled = false; arText('ok'); } else { arBtn.disabled = true; arText('no'); }
     });
     arBtn.addEventListener('click', () => mv.activateAR && mv.activateAR());
     radios.forEach(r => r.addEventListener('click', () => show(r.dataset.dish)));
-    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); show(current); } }, { rootMargin: '800px' }).observe(root);
+    radios.forEach(r => r.setAttribute('aria-checked', String(r.dataset.dish === current)));
+    mv.poster = `img/poster-${current}.webp`;
+    onceVisible(root, () => show(current), '700px 0px');
   }
 
-  /* Contato: abre o WhatsApp com a mensagem pronta */
-  const WHATSAPP = ''; // número da Previa com DDI e DDD, só dígitos (ex.: 5511999999999)
-  function initContact() {
-    const form = document.querySelector('[data-contact]'); if (!form) return;
-    const err = form.querySelector('[data-err]');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const d = new FormData(form); const nome = (d.get('nome') || '').trim(), rest = (d.get('restaurante') || '').trim();
-      if (!nome || !rest) { err.hidden = false; (nome ? form.restaurante : form.nome).focus(); return; }
-      err.hidden = true;
-      const cidade = (d.get('cidade') || '').trim(); const ints = d.getAll('interesse');
-      const msg = `Olá, Previa! Sou ${nome}, do ${rest}${cidade ? ` (${cidade})` : ''}. Quero saber mais sobre: ${ints.length ? ints.join(', ') : 'a Previa'}.`;
-      window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
-    });
-  }
-
-  initDemo(); initContact();
-
-  if (!window.gsap) { const v = document.querySelector('.hero video'); if (v) v.poster = matchMedia('(max-aspect-ratio: 1/1)').matches ? v.dataset.posterM : v.dataset.poster; reveal(); return; }
-
-  gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin, InertiaPlugin);
-  const mqReduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const reduce = mqReduce.matches;
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const touch = matchMedia('(hover: none), (pointer: coarse)').matches;
-  const clamp = (a, b, v) => Math.min(b, Math.max(a, v));
-
-  /* 6.1 Rolagem suave */
-  let lenis = null;
-  if (!reduce && window.Lenis) {
-    lenis = new Lenis({ lerp: 0.165, wheelMultiplier: 1.25 });
-    gsap.ticker.add(t => lenis.raf(t * 1000));
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.lagSmoothing(0);
-  }
-  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
-    const t = document.querySelector(a.getAttribute('href')); if (!t) return;
-    e.preventDefault();
-    if (lenis) lenis.scrollTo(t, { duration: 1.4 }); else t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-  }));
-
-  /* Vídeo do topo: corte retrato no celular, só com movimento liberado e sem economia de dados */
-  const video = document.querySelector('.hero video');
-  const mqPortrait = matchMedia('(max-aspect-ratio: 1/1)');
-  const saveData = !!(navigator.connection && navigator.connection.saveData);
-  const setVideo = () => {
-    const m = mqPortrait.matches;
-    video.poster = m ? video.dataset.posterM : video.dataset.poster;
-    const src = m ? video.dataset.videoSrcM : video.dataset.videoSrc;
-    if (mqReduce.matches || saveData || !src) { video.pause(); video.removeAttribute('src'); video.load(); return; }
-    if (video.getAttribute('src') !== src) { video.src = src; }
-    video.play().catch(() => {});
-  };
-  setVideo(); mqReduce.addEventListener('change', setVideo); mqPortrait.addEventListener('change', setVideo);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); else if (video.getAttribute('src')) video.play().catch(() => {}); });
-
-  /* 6.3 Revelação de texto ao carregar */
-  function splitFor(el, mode) {
-    const s = SplitText.create(el, { type: mode === 'chars' ? 'chars,words,lines' : 'lines,words', linesClass: 'line', charsClass: 'char', mask: 'lines', autoSplit: mode !== 'chars' });
-    el._split = s; return s;
-  }
-  function textReveal(baseDelay) {
-    const els = [...document.querySelectorAll('[data-text-reveal]')];
-    const groupIndex = new Map();
-    els.forEach(el => {
-      const mode = el.dataset.textReveal;
-      const g = el.closest('[data-text-reveal-group]');
-      let extra = 0;
-      if (g) { const n = groupIndex.get(g) || 0; extra = n * 0.12; groupIndex.set(g, n + 1); }
-      const s = splitFor(el, mode);
-      el.style.visibility = 'visible';
-      const targets = mode === 'chars' ? s.chars : s.lines;
-      gsap.from(targets, { yPercent: 135, duration: .7, ease: 'expo.out', stagger: mode === 'chars' ? 0.012 : 0.05, delay: baseDelay + extra,
-        onComplete: () => el.dispatchEvent(new CustomEvent('reveal:done')) });
-    });
-  }
-
-  /* 6.5 Sublinhado desenhado à mão */
-  const LINES = [
-    'M5 20.9999C26.7762 16.2245 49.5532 11.5572 71.7979 14.6666C84.9553 16.5057 97.0392 21.8432 109.987 24.3888C116.413 25.6523 123.012 25.5143 129.042 22.6388C135.981 19.3303 142.586 15.1422 150.092 13.3333C156.799 11.7168 161.702 14.6225 167.887 16.8333C181.562 21.7212 194.975 22.6234 209.252 21.3888C224.678 20.0548 239.912 17.991 255.42 18.3055C272.027 18.6422 288.409 18.867 305 17.9999',
-    'M5 24.2592C26.233 20.2879 47.7083 16.9968 69.135 13.8421C98.0469 9.5853 128.407 4.02322 158.059 5.14674C172.583 5.69708 187.686 8.66104 201.598 11.9696C207.232 13.3093 215.437 14.9471 220.137 18.3619C224.401 21.4596 220.737 25.6575 217.184 27.6168C208.309 32.5097 197.199 34.281 186.698 34.8486C183.159 35.0399 147.197 36.2657 155.105 26.5837C158.11 22.9053 162.993 20.6229 167.764 18.7924C178.386 14.7164 190.115 12.1115 201.624 10.3984C218.367 7.90626 235.528 7.06127 252.521 7.49276C258.455 7.64343 264.389 7.92791 270.295 8.41825C280.321 9.25056 296 10.8932 305 13.0242',
-    'M5 29.5014C9.61174 24.4515 12.9521 17.9873 20.9532 17.5292C23.7742 17.3676 27.0987 17.7897 29.6575 19.0014C33.2644 20.7093 35.6481 24.0004 39.4178 25.5014C48.3911 29.0744 55.7503 25.7731 63.3048 21.0292C67.9902 18.0869 73.7668 16.1366 79.3721 17.8903C85.1682 19.7036 88.2173 26.2464 94.4121 27.2514C102.584 28.5771 107.023 25.5064 113.276 20.6125C119.927 15.4067 128.83 12.3333 137.249 15.0014C141.418 16.3225 143.116 18.7528 146.581 21.0014C149.621 22.9736 152.78 23.6197 156.284 24.2514C165.142 25.8479 172.315 17.5185 179.144 13.5014C184.459 10.3746 191.785 8.74853 195.868 14.5292C199.252 19.3205 205.597 22.9057 211.621 22.5014C215.553 22.2374 220.183 17.8356 222.979 15.5569C225.4 13.5845 227.457 11.1105 230.742 10.5292C232.718 10.1794 234.784 12.9691 236.164 14.0014C238.543 15.7801 240.717 18.4775 243.356 19.8903C249.488 23.1729 255.706 21.2551 261.079 18.0014C266.571 14.6754 270.439 11.5202 277.146 13.6125C280.725 14.7289 283.221 17.209 286.393 19.0014C292.321 22.3517 298.255 22.5014 305 22.5014',
-    'M17.0039 32.6826C32.2307 32.8412 47.4552 32.8277 62.676 32.8118C67.3044 32.807 96.546 33.0555 104.728 32.0775C113.615 31.0152 104.516 28.3028 102.022 27.2826C89.9573 22.3465 77.3751 19.0254 65.0451 15.0552C57.8987 12.7542 37.2813 8.49399 44.2314 6.10216C50.9667 3.78422 64.2873 5.81914 70.4249 5.96641C105.866 6.81677 141.306 7.58809 176.75 8.59886C217.874 9.77162 258.906 11.0553 300 14.4892',
-    'M4.99805 20.9998C65.6267 17.4649 126.268 13.845 187.208 12.8887C226.483 12.2723 265.751 13.2796 304.998 13.9998',
-    'M5 29.8857C52.3147 26.9322 99.4329 21.6611 146.503 17.1765C151.753 16.6763 157.115 15.9505 162.415 15.6551C163.28 15.6069 165.074 15.4123 164.383 16.4275C161.704 20.3627 157.134 23.7551 153.95 27.4983C153.209 28.3702 148.194 33.4751 150.669 34.6605C153.638 36.0819 163.621 32.6063 165.039 32.2029C178.55 28.3608 191.49 23.5968 204.869 19.5404C231.903 11.3436 259.347 5.83254 288.793 5.12258C294.094 4.99476 299.722 4.82265 305 5.45025'
-  ];
-  let lineIdx = Math.floor(Math.random() * LINES.length);
-  const makeLine = box => {
-    box.innerHTML = `<svg viewBox="0 0 310 40" preserveAspectRatio="none"><path d="${LINES[lineIdx++ % LINES.length]}" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/></svg>`;
-    return box.querySelector('path');
-  };
-  function initDrawLines() {
-    document.querySelectorAll('[data-draw-line]').forEach(link => {
-      const box = link.querySelector('.draw-box'); let tween = null; let leaving = false;
-      link.addEventListener('mouseenter', () => {
-        leaving = false;
-        const p = makeLine(box);
-        gsap.set(p, { drawSVG: '0%' });
-        tween = gsap.to(p, { drawSVG: '100%', duration: 0.5, ease: 'power2.inOut' });
-      });
-      link.addEventListener('mouseleave', () => {
-        leaving = true;
-        const p = box.querySelector('path'); if (!p) return;
-        const out = () => { if (!leaving) return; gsap.to(p, { drawSVG: '100% 100%', duration: 0.5, ease: 'power2.inOut', onComplete: () => { if (leaving) box.innerHTML = ''; } }); };
-        if (tween && tween.isActive()) tween.eventCallback('onComplete', out); else out();
-      });
-    });
-  }
-  function drawAlways(el, delay) {
-    const box = el.querySelector('.draw-box'); const p = makeLine(box);
-    if (reduce) return;
-    gsap.fromTo(p, { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.6, ease: 'power2.inOut', delay });
-  }
-
-  /* Barra fixa do celular aparece depois do topo */
-  function initMobileBar() {
-    const bar = document.querySelector('.mbar'); if (!bar) return;
-    const nav = document.querySelector('.nav');
-    ScrollTrigger.create({ start: 40, onEnter: () => nav.setAttribute('data-scrolled', ''), onLeaveBack: () => nav.removeAttribute('data-scrolled') });
-    let past = false, inContact = false;
-    const sync = () => bar.toggleAttribute('data-on', past && !inContact);
-    ScrollTrigger.create({ trigger: '.hero', start: 'bottom 85%', onEnter: () => { past = true; sync(); }, onLeaveBack: () => { past = false; sync(); } });
-    ScrollTrigger.create({ trigger: '#contato', start: 'top 75%', onEnter: () => { inContact = true; sync(); }, onLeaveBack: () => { inContact = false; sync(); } });
-  }
-
-  /* 6.4 Revelação ao rolar */
-  function initScrollReveal() {
-    const done = new Set();
-    const anim = (el, tl, at) => {
-      const mode = el.dataset.scrollReveal;
-      el.style.visibility = 'visible';
-      if (reduce) {  return; }
-      if (mode === 'element') { tl.fromTo(el, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.8, ease: 'expo.out' }, at); return; }
-      const s = splitFor(el, mode);
-      const targets = mode === 'chars' ? s.chars : s.lines;
-      tl.from(targets, { yPercent: 135, duration: 1, ease: 'expo.out', stagger: mode === 'chars' ? 0.0175 : 0.07, onComplete: () => el.dispatchEvent(new CustomEvent('reveal:done')) }, at);
+  /* ---------- Placa: história presa na tela enquanto rola ---------- */
+  function initStory() {
+    const story = $('[data-story]'), stage = $('[data-pstage]'), steps = $$('.step', story), dots = $$('.dots i', story);
+    onceVisible(story, async () => {
+      await loadQr(); if (!window.qrcode) return;
+      const c = qrcode(0, 'L'); c.addData('https://rprevia.com/'); c.make();
+      $('[data-plaque-qr]').innerHTML = c.createSvgTag({ cellSize: 3, margin: 0, scalable: true });
+    }, '600px 0px');
+    let cur = -1, tapT;
+    const set = s => {
+      if (s === cur) return; cur = s;
+      stage.dataset.s = s; steps.forEach((el, i) => el.classList.toggle('on', i === s));
+      clearTimeout(tapT); stage.classList.remove('tap');
+      if (s === 0) tapT = setTimeout(() => stage.classList.add('tap'), 350);
     };
-    document.querySelectorAll('[data-scroll-reveal-group]').forEach(g => {
-      const tl = gsap.timeline({ paused: true });
-      g.querySelectorAll('[data-scroll-reveal]').forEach((el, i) => { done.add(el); anim(el, tl, i * 0.12); });
-      ScrollTrigger.create({ trigger: g, start: 'top 85%', once: true, onEnter: () => tl.play() });
-    });
-    document.querySelectorAll('[data-scroll-reveal]').forEach(el => {
-      if (done.has(el)) return;
-      if (el.dataset.scrollReveal === 'element' && el.closest('[data-featured-stack]') && matchMedia('(min-width: 992px)').matches) { el.style.visibility = 'visible'; return; }
-      const tl = gsap.timeline({ paused: true }); anim(el, tl, 0);
-      ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () => tl.play() });
-    });
+    const fit = () => {
+      if (innerWidth < 992) { const s = Math.min(1, (innerHeight * .5) / 380, (innerWidth - 24) / 350); stage.style.setProperty('--ss', s.toFixed(3)); stage.style.marginBottom = `${(s - 1) * 380}px`; }
+      else { stage.style.removeProperty('--ss'); stage.style.marginBottom = ''; }
+    };
+    fit(); addEventListener('resize', fit);
+    let ticking = false;
+    const run = () => {
+      ticking = false;
+      const r = story.getBoundingClientRect(), total = r.height - innerHeight;
+      const p = Math.min(1, Math.max(0, -r.top / total));
+      dots.forEach((d, i) => d.style.setProperty('--f', Math.min(1, Math.max(0, p * 4 - i)).toFixed(3)));
+      if (r.top < innerHeight && r.bottom > 0) set(Math.min(3, Math.floor(p * 4)));
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive: true });
+    set(0); run();
   }
 
-  /* 6.9 Pilha de cards (desktop): sem 3D, só transform e opacidade */
-  function initStack() {
-    const sec = document.querySelector('[data-featured-stack]'); if (!sec) return;
-    const pin = sec.querySelector('.pin'), badge = sec.querySelector('.badge svg');
-    const slides = [...sec.querySelectorAll('.slide')], n = slides.length;
-    const factor = +sec.dataset.featuredStack || 0.85;
-    const STEP = 0.05, LIFT = 34;
-    gsap.matchMedia().add('(min-width: 992px)', () => {
-      slides.forEach((s, b) => gsap.set(s, { scale: 1 - b * STEP, y: -b * LIFT, zIndex: n - b, autoAlpha: 1, transformOrigin: '50% 100%' }));
-      const tl = gsap.timeline({ paused: true });
-      for (let b = 0; b < n - 1; b++) {
-        const dir = b % 2 ? 1 : -1;
-        tl.to(slides[b], { y: '+=' + innerHeight * 0.85, x: dir * innerWidth * 0.03, rotation: dir * 4, ease: 'power2.in', duration: 1 }, b)
-          .to(slides[b], { autoAlpha: 0, ease: 'none', duration: 0.3 }, b + 0.65);
-        for (let c = b + 1; c < n; c++) tl.to(slides[c], { scale: 1 - (c - b - 1) * STEP, y: -(c - b - 1) * LIFT, ease: 'power1.out', duration: 1 }, b);
+  /* ---------- Mesa x delivery ---------- */
+  function initCanais() {
+    const sec = $('#canais'), btns = $$('[data-mode]', sec), pill = $('.seg .pill', sec), lbl = $('[data-mode-label]', sec);
+    let auto, mode = 'mesa';
+    const place = () => { const b = btns.find(x => x.dataset.mode === mode); pill.style.width = b.offsetWidth + 'px'; pill.style.transform = `translateX(${b.offsetLeft}px)`; };
+    const set = m => {
+      mode = m; sec.dataset.m = m; btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+      lbl.textContent = m === 'mesa' ? T('Mesa 7', 'Table 7') : 'Delivery'; place();
+    };
+    btns.forEach(b => b.addEventListener('click', () => { clearInterval(auto); set(b.dataset.mode); }));
+    addEventListener('resize', place); langHooks.push(() => requestAnimationFrame(() => set(mode)));
+    document.fonts && document.fonts.ready.then(place);
+    set('mesa');
+    if (!reduce) onceVisible(sec, () => { auto = setInterval(() => { if (!document.hidden) set(mode === 'mesa' ? 'delivery' : 'mesa'); }, 3600); }, '0px 0px -30% 0px');
+  }
+
+  /* ---------- Painel: edição em loop ---------- */
+  function initPainel() {
+    const b = $('[data-board]'), price = $('[data-price]', b), sold = $('[data-sold]', b), hide = $('[data-hide]', b), toast = $('[data-toast]', b), tl = $('[data-toast-t]', b), sl = $('[data-tg-label]', b);
+    const P = () => lang === 'en' ? ['€ 18.00', '€ 19.00'] : ['R$ 62,00', 'R$ 64,00'];
+    const showToast = async t => { tl.textContent = t; toast.classList.add('on'); await wait(1600); toast.classList.remove('on'); };
+    const soldTxt = off => sl.textContent = off ? T('Esgotado', 'Sold out') : T('Ativo', 'On');
+    const reset = () => { price.textContent = P()[0]; sold.classList.remove('off'); soldTxt(false); hide.classList.remove('hid'); };
+    langHooks.push(reset);
+    async function loop() {
+      for (;;) {
+        if (document.hidden) { await wait(1000); continue; }
+        reset(); await wait(1400);
+        price.classList.add('edit'); await wait(500);
+        const to = P()[1], base = to.slice(0, -4);
+        price.textContent = base; await wait(350);
+        for (let i = base.length + 1; i <= to.length; i++) { price.textContent = to.slice(0, i); await wait(120); }
+        price.classList.remove('edit');
+        await showToast(T('Preço atualizado em todas as mesas', 'Price updated on every table'));
+        await wait(300); sold.classList.add('off'); soldTxt(true);
+        await showToast(T('Tiramisù marcado como esgotado', 'Tiramisù marked as sold out'));
+        await wait(300); hide.classList.add('hid');
+        await showToast(T('Fettuccine oculto do cardápio', 'Fettuccine hidden from the menu'));
+        await wait(1400);
       }
-      tl.fromTo(badge, { rotation: 0 }, { rotation: 180, ease: 'none', duration: n - 1, transformOrigin: '50% 50%' }, 0);
-      const st = ScrollTrigger.create({ trigger: sec, start: 'top top', end: () => '+=' + innerHeight * factor * (n - 1), pin, pinSpacing: true, scrub: 0.2, refreshPriority: 1, invalidateOnRefresh: true, onUpdate: self => tl.progress(self.progress) });
-      return () => { st.kill(); tl.kill(); gsap.set(slides, { clearProps: 'all' }); };
-    });
-  }
-
-  /* 6.11 Pratos subindo em velocidades diferentes */
-  function initParallax() {
-    const photos = [...document.querySelectorAll('.flock .ph')]; if (!photos.length) return;
-    const mm = gsap.matchMedia();
-    mm.add({ d: '(min-width: 992px)', t: '(min-width: 480px) and (max-width: 991px)', m: '(max-width: 479px)', rm: '(prefers-reduced-motion: reduce)' }, ctx => {
-      if (ctx.conditions.rm) return;
-      const k = ctx.conditions.d ? 1 : ctx.conditions.t ? 0.5 : 0.3;
-      photos.forEach(p => { const sp = +p.dataset.speed || 1, dist = 190 * k;
-        gsap.fromTo(p, { y: dist * sp }, { y: -dist * sp, ease: 'none', scrollTrigger: { trigger: '.flock', start: 'clamp(top bottom)', end: 'clamp(bottom top)', scrub: true, invalidateOnRefresh: true, refreshPriority: -1 } }); });
-    });
-  }
-
-  /* 6.12 Toque com inércia nos pratos */
-  function initMomentum() {
-    if (!fine || reduce) return;
-    let lx = 0, ly = 0, vx = 0, vy = 0, x = 0, y = 0;
-    addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; }, { passive: true });
-    gsap.ticker.add(() => { vx = x - lx; vy = y - ly; lx = x; ly = y; });
-    document.querySelectorAll('[data-momentum]').forEach(t => t.addEventListener('mouseenter', () => {
-      const r = t.getBoundingClientRect(); const F = x - (r.left + r.width / 2), R = y - (r.top + r.height / 2);
-      const torque = (F * vy - R * vx) / (Math.hypot(F, R) || 1);
-      gsap.to(t, { inertia: { x: { velocity: clamp(-1080, 1080, vx * 30), end: 0 }, y: { velocity: clamp(-1080, 1080, vy * 30), end: 0 }, rotation: { velocity: clamp(-60, 60, torque * 20), end: 0 }, resistance: 200 } });
-    }));
-  }
-
-  /* 6.13 Troca de tema da página */
-  function initTheme() {
-    document.querySelectorAll('[data-page-theme]').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 55%', end: 'bottom 45%', refreshPriority: -1,
-      onToggle: self => { if (self.isActive) root.dataset.theme = el.dataset.pageTheme; else root.removeAttribute('data-theme'); } }));
-  }
-
-  /* 6.8 Faixa que inverte com a direção da rolagem */
-  function initMarquee() {
-    document.querySelectorAll('[data-marquee]').forEach(mq => {
-      const scroll = mq.querySelector('.scroll'), coll = mq.querySelector('.coll');
-      const dir = mq.dataset.direction === 'right' ? 1 : -1;
-      const speed = +mq.dataset.speed || 30;
-      for (let i = 0; i < 2; i++) scroll.appendChild(coll.cloneNode(true));
-      if (reduce) return;
-      const f = innerWidth < 479 ? 0.25 : innerWidth < 991 ? 0.5 : 1;
-      const dur = speed * (coll.offsetWidth / innerWidth) * f;
-      const colls = scroll.querySelectorAll('.coll');
-      gsap.set(colls, { xPercent: dir === 1 ? -100 : 0 });
-      const tl = gsap.to(colls, { xPercent: dir === 1 ? 0 : -100, repeat: -1, ease: 'none', duration: dur });
-      tl.totalProgress(0.5);
-      ScrollTrigger.create({ trigger: mq, start: 'top bottom', end: 'bottom top',
-        onUpdate: self => gsap.to(tl, { timeScale: self.direction === 1 ? 1 : -1, duration: 0.3, overwrite: true }) });
-    });
-  }
-
-  /* 6.2 Sequência de abertura */
-  function init() {
-    initDrawLines();
-    initScrollReveal();
-    initStack();
-    initParallax();
-    initMomentum();
-    initTheme();
-    initMobileBar();
-    initMarquee();
-    ScrollTrigger.refresh();
-  }
-  const start = () => {
-    if (root.hasAttribute('data-page-ready')) return;
-    root.setAttribute('data-page-ready', '');
-    const main = document.querySelector('main');
-    const wipe = document.querySelector('.wipe'), path = wipe.querySelector('path');
-    if (reduce) {
-      wipe.setAttribute('data-transition-ready', '');
-      document.querySelectorAll('[data-text-reveal],[data-scroll-reveal]').forEach(e => e.style.visibility = 'visible');
-      init(); drawAlways(document.querySelector('.cta .txt'), 0); return;
     }
-    const tl = gsap.timeline();
-    tl.set(main, { autoAlpha: 0 })
-      .set(path, { drawSVG: '0% 100%', strokeWidth: '30%' })
-      .addLabel('reveal', 0.1)
-      .set(main, { autoAlpha: 1 }, 'reveal')
-      .call(() => { textReveal(0.1); init(); drawAlways(document.querySelector('.cta .txt'), 0.5); }, null, 'reveal')
-      .to(path, { drawSVG: '100% 100%', strokeWidth: '5%', duration: 0.6, ease: 'power1.inOut', onComplete: () => wipe.setAttribute('data-transition-ready', '') }, 'reveal');
-  };
-  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 600))]).then(start);
+    reset();
+    if (!reduce) onceVisible(b, loop);
+
+    const cap = $('[data-cap]'), laps = $$('[data-lap]', cap), sts = $$('[data-st]', cap), dot = $('[data-done]', cap), dt = $('[data-done-t]', cap);
+    const anim = (el, kf, o) => el.animate(kf, { fill: 'forwards', easing: 'cubic-bezier(.2,.7,.2,1)', ...o }).finished;
+    const stepOn = n => sts.forEach((s, i) => s.classList.toggle('on', i === n));
+    async function capLoop() {
+      for (;;) {
+        [...laps, dot, dt].forEach(el => el.getAnimations().forEach(a => a.cancel()));
+        stepOn(0);
+        for (const l of laps) await anim(l, [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 1000 });
+        stepOn(1); await wait(1000);
+        stepOn(2);
+        await anim(dot, [{ opacity: 0, transform: 'translateY(-28px)' }, { opacity: 1, transform: 'none' }], { duration: 560 });
+        await anim(dt, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
+        await wait(2600);
+        await Promise.all([...laps, dot, dt].map(el => anim(el, [{ opacity: 1 }, { opacity: 0 }], { duration: 400 })));
+        [...laps, dot, dt].forEach(el => el.getAnimations().forEach(a => a.cancel()));
+      }
+    }
+    if (reduce) { laps.forEach(l => l.setAttribute('stroke-dashoffset', 0)); dot.setAttribute('opacity', 1); dt.setAttribute('opacity', 1); sts.forEach(s => s.classList.add('on')); }
+    else onceVisible(cap, capLoop);
+  }
+
+  /* ---------- Dashboard ---------- */
+  function initDash() {
+    const dash = $('[data-dash]'), bars = $('[data-bars]'), days = $('[data-days]');
+    const M = [38, 44, 52, 66, 88, 100, 72], D = [30, 34, 41, 55, 96, 84, 60];
+    const DN = { pt: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] };
+    const draw = () => {
+      const dn = DN[lang];
+      bars.innerHTML = M.map((m, i) => `<div class="d" data-tip="${dn[i]}\n${T('Mesa', 'Table')} ${fmtN(m * 21)}\nDelivery ${fmtN(D[i] * 9)}"><span class="bm" style="--h:${m};transition-delay:${i * 60}ms"></span><span class="bd2" style="--h:${D[i]};transition-delay:${i * 60 + 30}ms"></span></div>`).join('');
+      days.innerHTML = dn.map(d => `<span>${d}</span>`).join('');
+    };
+    draw(); langHooks.push(draw);
+    $$('[data-flt]', dash).forEach(b => b.addEventListener('click', () => { dash.dataset.f = b.dataset.flt; $$('[data-flt]', dash).forEach(x => x.setAttribute('aria-pressed', String(x === b))); }));
+    onceVisible(dash, () => { dash.classList.add('in'); $$('[data-n]', dash).forEach(el => countUp(el, +el.dataset.n)); });
+    langHooks.push(() => $$('[data-n]', dash).forEach(el => el.textContent = fmtN(+el.dataset.n)));
+  }
+
+  /* ---------- Faixa de segmentos ---------- */
+  function initStrip() {
+    const s = $('[data-strip]');
+    $$('[data-sn]').forEach(b => b.addEventListener('click', () => s.scrollBy({ left: +b.dataset.sn * (s.querySelector('figure').offsetWidth + 20) * 2, behavior: reduce ? 'auto' : 'smooth' })));
+    if (!matchMedia('(pointer: fine)').matches) return;
+    let down = false, x0 = 0, l0 = 0, moved = false;
+    s.addEventListener('pointerdown', e => { down = true; moved = false; x0 = e.clientX; l0 = s.scrollLeft; });
+    addEventListener('pointermove', e => { if (!down) return; const dx = e.clientX - x0; if (Math.abs(dx) > 4) { moved = true; s.style.scrollSnapType = 'none'; } s.scrollLeft = l0 - dx; });
+    addEventListener('pointerup', () => { if (!down) return; down = false; s.style.scrollSnapType = ''; });
+    s.addEventListener('click', e => { if (moved) e.preventDefault(); }, true);
+    s.addEventListener('dragstart', e => e.preventDefault());
+  }
+
+  /* ---------- Planos (abas no celular) ---------- */
+  function initPlanos() {
+    const tabs = $$('[data-p]'), cols = $$('.pcol');
+    tabs.forEach(t => t.addEventListener('click', () => { tabs.forEach(x => x.setAttribute('aria-selected', String(x === t))); cols.forEach((c, i) => c.classList.toggle('on', i === +t.dataset.p)); }));
+  }
+
+  /* ---------- Início ---------- */
+  let saved = null; try { saved = localStorage.getItem('previa-lang'); } catch (e) {}
+  const qLang = new URLSearchParams(location.search).get('lang');
+  setLang(qLang || saved || ((navigator.language || 'pt').toLowerCase().startsWith('pt') ? 'pt' : 'en'));
+  initNav(); initHero(); initDemo(); initStory(); initCanais(); initPainel(); initDash(); initStrip(); initPlanos();
+  const cnt = $('[data-count]'); onceVisible(cnt, () => countUp(cnt, 41, 1200));
+  // Ao trocar de idioma os títulos são refeitos: os que já apareceram continuam visíveis
+  langHooks.push(() => $$('[data-words]').forEach(el => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('in'); }));
+  $$('[data-r],[data-words]').forEach(el => io.observe(el));
+  requestAnimationFrame(() => requestAnimationFrame(() => $$('.hero [data-words], .hero [data-r]').forEach(el => el.classList.add('in'))));
 })();
 </script>
 </body>
